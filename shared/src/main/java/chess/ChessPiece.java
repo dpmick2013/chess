@@ -53,7 +53,12 @@ public class ChessPiece {
      */
     public Collection<ChessMove> pieceMoves(ChessBoard board, ChessPosition myPosition) {
         Collection<ChessMove> moveList = new HashSet<>();
-        bishopMoves(myPosition, moveList, board);
+        if (getPieceType() == PieceType.BISHOP) {
+            bishopMoves(myPosition, moveList, board);
+        }
+        if (getPieceType() == PieceType.KING) {
+            kingMoves(myPosition, moveList, board);
+        }
         return moveList;
     }
     private void bishopMoves(ChessPosition startPosition, Collection<ChessMove> moveList, ChessBoard board) {
@@ -146,8 +151,60 @@ public class ChessPiece {
             }
         }
     }
+    private void kingMoves(ChessPosition startPosition, Collection<ChessMove> moveList, ChessBoard board) {
+        int row = startPosition.getRow();
+        int col = startPosition.getColumn();
+        // UP
+        if (row + 1 < 9) {
+            ChessPosition end = new ChessPosition(row + 1, col);
+            ChessMove move = new ChessMove(startPosition, end, null);
+            moveList.add(move);
+        }
+        // UPRIGHT
+        if (row + 1 < 9 && col + 1 < 9) {
+            ChessPosition end = new ChessPosition(row + 1, col + 1);
+            ChessMove move = new ChessMove(startPosition, end, null);
+            moveList.add(move);
+        }
+        // RIGHT
+        if (col + 1 < 9) {
+            ChessPosition end = new ChessPosition(row, col + 1);
+            ChessMove move = new ChessMove(startPosition, end, null);
+            moveList.add(move);
+        }
+        // DOWNRIGHT
+        if (row - 1 > 0 && col + 1 < 9) {
+            ChessPosition end = new ChessPosition(row - 1, col + 1);
+            ChessMove move = new ChessMove(startPosition, end, null);
+            moveList.add(move);
+        }
+        // DOWN
+        if (row - 1 > 0) {
+            ChessPosition end = new ChessPosition(row - 1, col);
+            ChessMove move = new ChessMove(startPosition, end, null);
+            moveList.add(move);
+        }
+        // DOWNLEFT
+        if (row - 1 > 0 && col - 1 > 0) {
+            ChessPosition end = new ChessPosition(row - 1, col - 1);
+            ChessMove move = new ChessMove(startPosition, end, null);
+            moveList.add(move);
+        }
+        // LEFT
+        if (col - 1 > 0) {
+            ChessPosition end = new ChessPosition(row, col - 1);
+            ChessMove move = new ChessMove(startPosition, end, null);
+            moveList.add(move);
+        }
+        // UPLEFT
+        if (row + 1 < 9 && col - 1 > 0) {
+            ChessPosition end = new ChessPosition(row + 1, col - 1);
+            ChessMove move = new ChessMove(startPosition, end, null);
+            moveList.add(move);
+        }
+    }
 
-    @Override
+        @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
