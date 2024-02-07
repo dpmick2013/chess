@@ -118,6 +118,16 @@ public class ChessPiece {
         }
         // UPLEFT
         for (int i = 8; i > 0; i--) {
+            ChessPosition test = new ChessPosition(row + 1, col - 1);
+            if (board.getPiece(test) != null) {
+                if (board.getPiece(test).pieceColor == getTeamColor()) {
+                    break;
+                }
+                else {
+                    ChessMove move = new ChessMove(startPosition, test, null);
+                    moveList.add(move);
+                }
+            }
             if (row + i > 8 || col - i < 1) {
                 continue;
             }
