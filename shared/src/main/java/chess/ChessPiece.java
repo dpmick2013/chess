@@ -61,6 +61,7 @@ public class ChessPiece {
         }
         return moveList;
     }
+    boolean enemy = false;
     private void bishopMoves(ChessPosition startPosition, Collection<ChessMove> moveList, ChessBoard board) {
         int row = startPosition.getRow();
         int col = startPosition.getColumn();
@@ -154,57 +155,131 @@ public class ChessPiece {
     private void kingMoves(ChessPosition startPosition, Collection<ChessMove> moveList, ChessBoard board) {
         int row = startPosition.getRow();
         int col = startPosition.getColumn();
+        ChessPosition end;
+        ChessMove move;
         // UP
         if (row + 1 < 9) {
-            ChessPosition end = new ChessPosition(row + 1, col);
-            ChessMove move = new ChessMove(startPosition, end, null);
-            moveList.add(move);
+            end = new ChessPosition(row + 1, col);
+            if (occupied(board, end)) {
+                if (enemy) {
+                    move = new ChessMove(startPosition, end, null);
+                    moveList.add(move);
+                }
+            }
+            else {
+                move = new ChessMove(startPosition, end, null);
+                moveList.add(move);
+            }
         }
         // UPRIGHT
         if (row + 1 < 9 && col + 1 < 9) {
-            ChessPosition end = new ChessPosition(row + 1, col + 1);
-            ChessMove move = new ChessMove(startPosition, end, null);
-            moveList.add(move);
+            end = new ChessPosition(row + 1, col + 1);
+            if (occupied(board, end)) {
+                if (enemy) {
+                    move = new ChessMove(startPosition, end, null);
+                    moveList.add(move);
+                }
+            }
+            else {
+                move = new ChessMove(startPosition, end, null);
+                moveList.add(move);
+            }
         }
         // RIGHT
         if (col + 1 < 9) {
-            ChessPosition end = new ChessPosition(row, col + 1);
-            ChessMove move = new ChessMove(startPosition, end, null);
-            moveList.add(move);
+            end = new ChessPosition(row, col + 1);
+            if (occupied(board, end)) {
+                if (enemy) {
+                    move = new ChessMove(startPosition, end, null);
+                    moveList.add(move);
+                }
+            }
+            else {
+                move = new ChessMove(startPosition, end, null);
+                moveList.add(move);
+            }
         }
         // DOWNRIGHT
         if (row - 1 > 0 && col + 1 < 9) {
-            ChessPosition end = new ChessPosition(row - 1, col + 1);
-            ChessMove move = new ChessMove(startPosition, end, null);
-            moveList.add(move);
+            end = new ChessPosition(row - 1, col + 1);
+            if (occupied(board, end)) {
+                if (enemy) {
+                    move = new ChessMove(startPosition, end, null);
+                    moveList.add(move);
+                }
+            }
+            else {
+                move = new ChessMove(startPosition, end, null);
+                moveList.add(move);
+            }
         }
         // DOWN
         if (row - 1 > 0) {
-            ChessPosition end = new ChessPosition(row - 1, col);
-            ChessMove move = new ChessMove(startPosition, end, null);
-            moveList.add(move);
+            end = new ChessPosition(row - 1, col);
+            if (occupied(board, end)) {
+                if (enemy) {
+                    move = new ChessMove(startPosition, end, null);
+                    moveList.add(move);
+                }
+            }
+            else {
+                move = new ChessMove(startPosition, end, null);
+                moveList.add(move);
+            }
         }
         // DOWNLEFT
         if (row - 1 > 0 && col - 1 > 0) {
-            ChessPosition end = new ChessPosition(row - 1, col - 1);
-            ChessMove move = new ChessMove(startPosition, end, null);
-            moveList.add(move);
+            end = new ChessPosition(row - 1, col - 1);
+            if (occupied(board, end)) {
+                if (enemy) {
+                    move = new ChessMove(startPosition, end, null);
+                    moveList.add(move);
+                }
+            }
+            else {
+                move = new ChessMove(startPosition, end, null);
+                moveList.add(move);
+            }
         }
         // LEFT
         if (col - 1 > 0) {
-            ChessPosition end = new ChessPosition(row, col - 1);
-            ChessMove move = new ChessMove(startPosition, end, null);
-            moveList.add(move);
+            end = new ChessPosition(row, col - 1);
+            if (occupied(board, end)) {
+                if (enemy) {
+                    move = new ChessMove(startPosition, end, null);
+                    moveList.add(move);
+                }
+            }
+            else {
+                move = new ChessMove(startPosition, end, null);
+                moveList.add(move);
+            }
         }
         // UPLEFT
         if (row + 1 < 9 && col - 1 > 0) {
-            ChessPosition end = new ChessPosition(row + 1, col - 1);
-            ChessMove move = new ChessMove(startPosition, end, null);
-            moveList.add(move);
+            end = new ChessPosition(row + 1, col - 1);
+            if (occupied(board, end)) {
+                if (enemy) {
+                    move = new ChessMove(startPosition, end, null);
+                    moveList.add(move);
+                }
+            }
+            else {
+                move = new ChessMove(startPosition, end, null);
+                moveList.add(move);
+            }
         }
     }
-
-        @Override
+    private boolean occupied(ChessBoard board, ChessPosition position) {
+        if (board.getPiece(position) == null) {
+            return false;
+        }
+        else {
+            enemy = board.getPiece(position).pieceColor != pieceColor;
+            return true;
+        }
+    }
+    @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
