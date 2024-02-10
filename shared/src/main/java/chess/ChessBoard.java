@@ -56,43 +56,43 @@ public class ChessBoard {
             int row;
             if (j == 0) {
                 color = ChessGame.TeamColor.WHITE;
-                row = 1;
+                row = 2;
             }
             else {
                 color = ChessGame.TeamColor.BLACK;
-                row = 6;
+                row = 7;
             }
             piece = new ChessPiece(color, ChessPiece.PieceType.PAWN);
-            for (int i = 0; i < 8; i++) {
+            for (int i = 1; i < 9; i++) {
                 position = new ChessPosition(row, i);
                 addPiece(position, piece);
             }
             if (j == 0) {
-                row = 0;
+                row = 1;
             }
             else {
-                row = 7;
+                row = 8;
             }
             piece = new ChessPiece(color, ChessPiece.PieceType.ROOK);
-            for (int i = 0; i < 8; i++) {
+            for (int i = 1; i < 9; i += 7) {
                 position = new ChessPosition(row, i);
                 addPiece(position, piece);
             }
             piece = new ChessPiece(color, ChessPiece.PieceType.KNIGHT);
-            for (int i = 1; i < 7; i += 5) {
+            for (int i = 2; i < 8; i += 5) {
                 position = new ChessPosition(row, i);
                 addPiece(position, piece);
             }
             piece = new ChessPiece(color, ChessPiece.PieceType.BISHOP);
-            for (int i = 2; i < 6; i += 3) {
+            for (int i = 3; i < 7; i += 3) {
                 position = new ChessPosition(row, i);
                 addPiece(position, piece);
             }
             piece = new ChessPiece(color, ChessPiece.PieceType.QUEEN);
-            position = new ChessPosition(row, 3);
+            position = new ChessPosition(row, 4);
             addPiece(position, piece);
             piece = new ChessPiece(color, ChessPiece.PieceType.KING);
-            position = new ChessPosition(row, 4);
+            position = new ChessPosition(row, 5);
             addPiece(position, piece);
         }
     }
