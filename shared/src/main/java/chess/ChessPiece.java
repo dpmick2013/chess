@@ -68,9 +68,12 @@ public class ChessPiece {
         if (getPieceType() == PieceType.QUEEN) {
             queenMoves(myPosition, moveList, board);
         }
+        if (getPieceType() == PieceType.ROOK) {
+            rookMoves(myPosition, moveList, board);
+        }
         return moveList;
     }
-    boolean hasMoved = false;
+//    boolean hasMoved = false;
     boolean enemy = false;
     private void bishopMoves(ChessPosition startPosition, Collection<ChessMove> moveList, ChessBoard board) {
         int row = startPosition.getRow();
@@ -661,6 +664,79 @@ public class ChessPiece {
         for (int i = 1; i < 8; i++) {
             if (row + i < 9 && col - i > 0) {
                 end = new ChessPosition(row + i, col - i);
+                if (occupied(board, end)) {
+                    if (enemy) {
+                        move = new ChessMove(startPosition, end, null);
+                        moveList.add(move);
+                    }
+                    break;
+                }
+                else {
+                    move = new ChessMove(startPosition, end, null);
+                    moveList.add(move);
+                }
+            }
+        }
+    }
+    private void rookMoves(ChessPosition startPosition, Collection<ChessMove> moveList, ChessBoard board) {
+        int row = startPosition.getRow();
+        int col = startPosition.getColumn();
+        ChessPosition end;
+        ChessMove move;
+        // UP
+        for (int i = 1; i < 8; i++) {
+            if (row + i < 9) {
+                end = new ChessPosition(row + i, col);
+                if (occupied(board, end)) {
+                    if (enemy) {
+                        move = new ChessMove(startPosition, end, null);
+                        moveList.add(move);
+                    }
+                    break;
+                } else {
+                    move = new ChessMove(startPosition, end, null);
+                    moveList.add(move);
+                }
+            }
+        }
+        // LEFT
+        for (int i = 1; i < 8; i++) {
+            if (col - i > 0) {
+                end = new ChessPosition(row, col - i);
+                if (occupied(board, end)) {
+                    if (enemy) {
+                        move = new ChessMove(startPosition, end, null);
+                        moveList.add(move);
+                    }
+                    break;
+                }
+                else {
+                    move = new ChessMove(startPosition, end, null);
+                    moveList.add(move);
+                }
+            }
+        }
+        // DOWN
+        for (int i = 1; i < 8; i++) {
+            if (row - i > 0) {
+                end = new ChessPosition(row - i, col);
+                if (occupied(board, end)) {
+                    if (enemy) {
+                        move = new ChessMove(startPosition, end, null);
+                        moveList.add(move);
+                    }
+                    break;
+                }
+                else {
+                    move = new ChessMove(startPosition, end, null);
+                    moveList.add(move);
+                }
+            }
+        }
+        // RIGHT
+        for (int i = 1; i < 8; i++) {
+            if (col + i < 9) {
+                end = new ChessPosition(row, col + i);
                 if (occupied(board, end)) {
                     if (enemy) {
                         move = new ChessMove(startPosition, end, null);
