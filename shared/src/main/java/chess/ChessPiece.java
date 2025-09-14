@@ -236,6 +236,120 @@ public class ChessPiece {
     private void knightMoves(ChessBoard board, ChessPosition pos, Collection<ChessMove> moveList) {
         int row = pos.getRow();
         int col = pos.getColumn();
+        ChessPosition end;
+        ChessMove move;
+        // Up Right
+        if (row + 2 <= 8 && col + 1 <= 8) {
+            end = new ChessPosition(row + 2, col + 1);
+            if (occupied(board, end)) {
+                if (enemy) {
+                    move = new ChessMove(pos, end, null);
+                    moveList.add(move);
+                }
+            }
+            else {
+                move = new ChessMove(pos, end, null);
+                moveList.add(move);
+            }
+        }
+        // Right Up
+        if (row + 1 <= 8 && col + 2 <= 8) {
+            end = new ChessPosition(row + 1, col + 2);
+            if (occupied(board, end)) {
+                if (enemy) {
+                    move = new ChessMove(pos, end, null);
+                    moveList.add(move);
+                }
+            }
+            else {
+                move = new ChessMove(pos, end, null);
+                moveList.add(move);
+            }
+        }
+        // Right Down
+        if (row - 1 >= 1 && col + 2 <= 8) {
+            end = new ChessPosition(row - 1, col + 2);
+            if (occupied(board, end)) {
+                if (enemy) {
+                    move = new ChessMove(pos, end, null);
+                    moveList.add(move);
+                }
+            }
+            else {
+                move = new ChessMove(pos, end, null);
+                moveList.add(move);
+            }
+        }
+        // Down Right
+        if (row - 2 >= 1 && col + 1 <= 8) {
+            end = new ChessPosition(row - 2, col + 1);
+            if (occupied(board, end)) {
+                if (enemy) {
+                    move = new ChessMove(pos, end, null);
+                    moveList.add(move);
+                }
+            }
+            else {
+                move = new ChessMove(pos, end, null);
+                moveList.add(move);
+            }
+        }
+        // Down Left
+        if (row - 2 >= 1 && col - 1 >= 1) {
+            end = new ChessPosition(row - 2, col - 1);
+            if (occupied(board, end)) {
+                if (enemy) {
+                    move = new ChessMove(pos, end, null);
+                    moveList.add(move);
+                }
+            }
+            else {
+                move = new ChessMove(pos, end, null);
+                moveList.add(move);
+            }
+        }
+        // Left Down
+        if (row - 1 >= 1 && col - 2 >= 1) {
+            end = new ChessPosition(row - 1, col - 2);
+            if (occupied(board, end)) {
+                if (enemy) {
+                    move = new ChessMove(pos, end, null);
+                    moveList.add(move);
+                }
+            }
+            else {
+                move = new ChessMove(pos, end, null);
+                moveList.add(move);
+            }
+        }
+        // Left Up
+        if (row + 1 <= 8 && col - 2 >= 1) {
+            end = new ChessPosition(row + 1, col - 2);
+            if (occupied(board, end)) {
+                if (enemy) {
+                    move = new ChessMove(pos, end, null);
+                    moveList.add(move);
+                }
+            }
+            else {
+                move = new ChessMove(pos, end, null);
+                moveList.add(move);
+            }
+        }
+        // Up Left
+        if (row + 2 <= 8 && col - 1 >= 1) {
+            end = new ChessPosition(row + 2, col - 1);
+            if (occupied(board, end)) {
+                if (enemy) {
+                    move = new ChessMove(pos, end, null);
+                    moveList.add(move);
+                }
+            }
+            else {
+                move = new ChessMove(pos, end, null);
+                moveList.add(move);
+            }
+        }
     }
 
     private void rookMoves(ChessBoard board, ChessPosition pos, Collection<ChessMove> moveList) {
