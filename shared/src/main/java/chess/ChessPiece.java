@@ -63,9 +63,124 @@ public class ChessPiece {
         return moveList;
     }
 
+    boolean enemy;
     private void kingMoves(ChessBoard board, ChessPosition pos, Collection<ChessMove> moveList) {
         int row = pos.getRow();
         int col = pos.getColumn();
+        ChessPosition end;
+        ChessMove move;
+        // Up
+        if (row + 1 <= 8) {
+            end = new ChessPosition(row + 1, col);
+            if (occupied(board, end)) {
+                if (enemy) {
+                    move = new ChessMove(pos, end, null);
+                    moveList.add(move);
+                }
+            }
+            else {
+                move = new ChessMove(pos, end, null);
+                moveList.add(move);
+            }
+        }
+        // Up Right
+        if (row + 1 <= 8 && col + 1 <= 8) {
+            end = new ChessPosition(row + 1, col + 1);
+            if (occupied(board, end)) {
+                if (enemy) {
+                    move = new ChessMove(pos, end, null);
+                    moveList.add(move);
+                }
+            }
+            else {
+                move = new ChessMove(pos, end, null);
+                moveList.add(move);
+            }
+        }
+        // Right
+        if (col + 1 <= 8) {
+            end = new ChessPosition(row, col + 1);
+            if (occupied(board, end)) {
+                if (enemy) {
+                    move = new ChessMove(pos, end, null);
+                    moveList.add(move);
+                }
+            }
+            else {
+                move = new ChessMove(pos, end, null);
+                moveList.add(move);
+            }
+        }
+        // Down Right
+        if (row - 1 >= 1 && col + 1 <= 8) {
+            end = new ChessPosition(row - 1, col + 1);
+            if (occupied(board, end)) {
+                if (enemy) {
+                    move = new ChessMove(pos, end, null);
+                    moveList.add(move);
+                }
+            }
+            else {
+                move = new ChessMove(pos, end, null);
+                moveList.add(move);
+            }
+        }
+        // Down
+        if (row - 1 >= 1) {
+            end = new ChessPosition(row - 1, col);
+            if (occupied(board, end)) {
+                if (enemy) {
+                    move = new ChessMove(pos, end, null);
+                    moveList.add(move);
+                }
+            }
+            else {
+                move = new ChessMove(pos, end, null);
+                moveList.add(move);
+            }
+        }
+        // Down Left
+        if (row - 1 >= 1 && col - 1 >= 1) {
+            end = new ChessPosition(row - 1, col - 1);
+            if (occupied(board, end)) {
+                if (enemy) {
+                    move = new ChessMove(pos, end, null);
+                    moveList.add(move);
+                }
+            }
+            else {
+                move = new ChessMove(pos, end, null);
+                moveList.add(move);
+            }
+        }
+        // Left
+        if (col - 1 >= 1) {
+            end = new ChessPosition(row, col - 1);
+            if (occupied(board, end)) {
+                if (enemy) {
+                    move = new ChessMove(pos, end, null);
+                    moveList.add(move);
+                }
+            }
+            else {
+                move = new ChessMove(pos, end, null);
+                moveList.add(move);
+            }
+        }
+        // Up Left
+        if (row + 1 <= 8 && col - 1 >= 1) {
+            end = new ChessPosition(row + 1, col - 1);
+            if (occupied(board, end)) {
+                if (enemy) {
+                    move = new ChessMove(pos, end, null);
+                    moveList.add(move);
+                }
+            }
+            else {
+                move = new ChessMove(pos, end, null);
+                moveList.add(move);
+            }
+        }
     }
 
     private void queenMoves(ChessBoard board, ChessPosition pos, Collection<ChessMove> moveList) {
@@ -81,40 +196,40 @@ public class ChessPiece {
             if (row + i > 8 || col + i > 8) break;
             var end = new ChessPosition(row + i, col + i);
             ChessMove move;
-            if (board.getPiece(end) != null && board.getPiece(end).pieceColor == getTeamColor()) break;
+            if (occupied(board, end) && !enemy) break;
             move = new ChessMove(pos, end, null);
             moveList.add(move);
-            if (board.getPiece(end) != null) break;
+            if (occupied(board, end)) break;
         }
         // Down Right
         for (int i = 1; i < 8; i++) {
             if (row - i < 1 || col + i > 8) break;
             var end = new ChessPosition(row - i, col + i);
             ChessMove move;
-            if (board.getPiece(end) != null && board.getPiece(end).pieceColor == getTeamColor()) break;
+            if (occupied(board, end) && !enemy) break;
             move = new ChessMove(pos, end, null);
             moveList.add(move);
-            if (board.getPiece(end) != null) break;
+            if (occupied(board, end)) break;
         }
         // Down Left
         for (int i = 1; i < 8; i++) {
             if (row - i < 1 || col - i < 1) break;
             var end = new ChessPosition(row - i, col - i);
             ChessMove move;
-            if (board.getPiece(end) != null && board.getPiece(end).pieceColor == getTeamColor()) break;
+            if (occupied(board, end) && !enemy) break;
             move = new ChessMove(pos, end, null);
             moveList.add(move);
-            if (board.getPiece(end) != null) break;
+            if (occupied(board, end)) break;
         }
         // Up Left
         for (int i = 1; i < 8; i++) {
             if (row + i > 8 || col - i < 1) break;
             var end = new ChessPosition(row + i, col - i);
             ChessMove move;
-            if (board.getPiece(end) != null && board.getPiece(end).pieceColor == getTeamColor()) break;
+            if (occupied(board, end) && !enemy) break;
             move = new ChessMove(pos, end, null);
             moveList.add(move);
-            if (board.getPiece(end) != null) break;
+            if (occupied(board, end)) break;
         }
     }
 
@@ -131,5 +246,13 @@ public class ChessPiece {
     private void pawnMoves(ChessBoard board, ChessPosition pos, Collection<ChessMove> moveList) {
         int row = pos.getRow();
         int col = pos.getColumn();
+    }
+
+    private boolean occupied(ChessBoard board, ChessPosition pos) {
+        if (board.getPiece(pos) != null) {
+            enemy = board.getPiece(pos).pieceColor != getTeamColor();
+            return true;
+        }
+        return false;
     }
 }
