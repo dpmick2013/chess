@@ -186,6 +186,78 @@ public class ChessPiece {
     private void queenMoves(ChessBoard board, ChessPosition pos, Collection<ChessMove> moveList) {
         int row = pos.getRow();
         int col = pos.getColumn();
+        // Up
+        for (int i = 1; i < 8; i++) {
+            if (row + i > 8) break;
+            var end = new ChessPosition(row + i, col);
+            if (occupied(board, end) && !enemy) break;
+            moveList.add(new ChessMove(pos, end, null));
+            if (occupied(board, end)) break;
+        }
+        // Up Right
+        for (int i = 1; i < 8; i++) {
+            if (row + i > 8 || col + i > 8) break;
+            var end = new ChessPosition(row + i, col + i);
+            ChessMove move;
+            if (occupied(board, end) && !enemy) break;
+            move = new ChessMove(pos, end, null);
+            moveList.add(move);
+            if (occupied(board, end)) break;
+        }
+        // Right
+        for (int i = 1; i < 8; i++) {
+            if (col + i > 8) break;
+            var end = new ChessPosition(row, col + i);
+            if (occupied(board, end) && !enemy) break;
+            moveList.add(new ChessMove(pos, end, null));
+            if (occupied(board, end)) break;
+        }
+        // Down Right
+        for (int i = 1; i < 8; i++) {
+            if (row - i < 1 || col + i > 8) break;
+            var end = new ChessPosition(row - i, col + i);
+            ChessMove move;
+            if (occupied(board, end) && !enemy) break;
+            move = new ChessMove(pos, end, null);
+            moveList.add(move);
+            if (occupied(board, end)) break;
+        }
+        // Down
+        for (int i = 1; i < 8; i++) {
+            if (row - i < 1) break;
+            var end = new ChessPosition(row - i, col);
+            if (occupied(board, end) && !enemy) break;
+            moveList.add(new ChessMove(pos, end, null));
+            if (occupied(board, end)) break;
+        }
+        // Down Left
+        for (int i = 1; i < 8; i++) {
+            if (row - i < 1 || col - i < 1) break;
+            var end = new ChessPosition(row - i, col - i);
+            ChessMove move;
+            if (occupied(board, end) && !enemy) break;
+            move = new ChessMove(pos, end, null);
+            moveList.add(move);
+            if (occupied(board, end)) break;
+        }
+        // Left
+        for (int i = 1; i < 8; i++) {
+            if (col - i < 1) break;
+            var end = new ChessPosition(row, col - i);
+            if (occupied(board, end) && !enemy) break;
+            moveList.add(new ChessMove(pos, end, null));
+            if (occupied(board, end)) break;
+        }
+        // Up Left
+        for (int i = 1; i < 8; i++) {
+            if (row + i > 8 || col - i < 1) break;
+            var end = new ChessPosition(row + i, col - i);
+            ChessMove move;
+            if (occupied(board, end) && !enemy) break;
+            move = new ChessMove(pos, end, null);
+            moveList.add(move);
+            if (occupied(board, end)) break;
+        }
     }
 
     private void bishopMoves(ChessBoard board, ChessPosition pos, Collection<ChessMove> moveList) {
