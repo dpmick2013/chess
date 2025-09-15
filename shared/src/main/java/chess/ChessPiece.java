@@ -427,6 +427,35 @@ public class ChessPiece {
     private void rookMoves(ChessBoard board, ChessPosition pos, Collection<ChessMove> moveList) {
         int row = pos.getRow();
         int col = pos.getColumn();
+        // Up
+        for (int i = 1; i < 8; i++) {
+            if (row + i > 8) break;
+            var end = new ChessPosition(row + i, col);
+            if (occupied(board, end) && !enemy) break;
+            moveList.add(new ChessMove(pos, end, null));
+            if (occupied(board, end)) break;
+        }
+        for (int i = 1; i < 8; i++) {
+            if (col + i > 8) break;
+            var end = new ChessPosition(row, col + i);
+            if (occupied(board, end) && !enemy) break;
+            moveList.add(new ChessMove(pos, end, null));
+            if (occupied(board, end)) break;
+        }
+        for (int i = 1; i < 8; i++) {
+            if (row - i < 1) break;
+            var end = new ChessPosition(row - i, col);
+            if (occupied(board, end) && !enemy) break;
+            moveList.add(new ChessMove(pos, end, null));
+            if (occupied(board, end)) break;
+        }
+        for (int i = 1; i < 8; i++) {
+            if (col - i < 1) break;
+            var end = new ChessPosition(row, col - i);
+            if (occupied(board, end) && !enemy) break;
+            moveList.add(new ChessMove(pos, end, null));
+            if (occupied(board, end)) break;
+        }
     }
 
     private void pawnMoves(ChessBoard board, ChessPosition pos, Collection<ChessMove> moveList) {
