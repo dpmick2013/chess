@@ -2,6 +2,7 @@ package chess;
 
 import java.util.Collection;
 import java.util.HashSet;
+import java.util.Objects;
 
 /**
  * Represents a single chess piece
@@ -563,5 +564,43 @@ public class ChessPiece {
             return true;
         }
         return false;
+    }
+
+    @Override
+    public String toString() {
+        if (getTeamColor() == ChessGame.TeamColor.WHITE) {
+            if (getPieceType() == PieceType.PAWN) return "P";
+            if (getPieceType() == PieceType.ROOK) return "R";
+            if (getPieceType() == PieceType.KNIGHT) return "N";
+            if (getPieceType() == PieceType.BISHOP) return "B";
+            if (getPieceType() == PieceType.QUEEN) return "Q";
+            if (getPieceType() == PieceType.KING) return "K";
+        }
+        if (getTeamColor() == ChessGame.TeamColor.BLACK) {
+            if (getPieceType() == PieceType.PAWN) return "p";
+            if (getPieceType() == PieceType.ROOK) return "r";
+            if (getPieceType() == PieceType.KNIGHT) return "n";
+            if (getPieceType() == PieceType.BISHOP) return "b";
+            if (getPieceType() == PieceType.QUEEN) return "q";
+            if (getPieceType() == PieceType.KING) return "k";
+        }
+        return "";
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        ChessPiece that = (ChessPiece) o;
+        return pieceColor == that.pieceColor && type == that.type;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(pieceColor, type);
     }
 }
