@@ -479,10 +479,7 @@ public class ChessPiece {
                 else if (row != 2){
                     if (!occupied(board, one_space)) {
                         if (promotion) {
-                            moveList.add(new ChessMove(pos, one_space, PieceType.QUEEN));
-                            moveList.add(new ChessMove(pos, one_space, PieceType.BISHOP));
-                            moveList.add(new ChessMove(pos, one_space, PieceType.KNIGHT));
-                            moveList.add(new ChessMove(pos, one_space, PieceType.ROOK));
+                            pawnPromotion(pos, one_space, moveList);
                         }
                         else moveList.add(new ChessMove(pos, one_space, null));
                     }
@@ -491,10 +488,7 @@ public class ChessPiece {
                     diag1 = new ChessPosition(row + 1, col + 1);
                     if (occupied(board, diag1) && enemy) {
                         if (promotion) {
-                            moveList.add(new ChessMove(pos, diag1, PieceType.QUEEN));
-                            moveList.add(new ChessMove(pos, diag1, PieceType.BISHOP));
-                            moveList.add(new ChessMove(pos, diag1, PieceType.KNIGHT));
-                            moveList.add(new ChessMove(pos, diag1, PieceType.ROOK));
+                            pawnPromotion(pos, diag1, moveList);
                         } else moveList.add(new ChessMove(pos, diag1, null));
                     }
                 }
@@ -502,10 +496,7 @@ public class ChessPiece {
                     diag2 = new ChessPosition(row + 1, col - 1);
                     if (occupied(board, diag2) && enemy) {
                         if (promotion) {
-                            moveList.add(new ChessMove(pos, diag2, PieceType.QUEEN));
-                            moveList.add(new ChessMove(pos, diag2, PieceType.BISHOP));
-                            moveList.add(new ChessMove(pos, diag2, PieceType.KNIGHT));
-                            moveList.add(new ChessMove(pos, diag2, PieceType.ROOK));
+                            pawnPromotion(pos, diag2, moveList);
                         } else moveList.add(new ChessMove(pos, diag2, null));
                     }
                 }
@@ -525,10 +516,7 @@ public class ChessPiece {
                 else if (row != 7) {
                     if (!occupied(board, one_space)) {
                         if (promotion) {
-                            moveList.add(new ChessMove(pos, one_space, PieceType.QUEEN));
-                            moveList.add(new ChessMove(pos, one_space, PieceType.BISHOP));
-                            moveList.add(new ChessMove(pos, one_space, PieceType.KNIGHT));
-                            moveList.add(new ChessMove(pos, one_space, PieceType.ROOK));
+                            pawnPromotion(pos, one_space, moveList);
                         } else moveList.add(new ChessMove(pos, one_space, null));
                     }
                 }
@@ -536,10 +524,7 @@ public class ChessPiece {
                     diag1 = new ChessPosition(row - 1, col + 1);
                     if (occupied(board, diag1) && enemy) {
                         if (promotion) {
-                            moveList.add(new ChessMove(pos, diag1, PieceType.QUEEN));
-                            moveList.add(new ChessMove(pos, diag1, PieceType.BISHOP));
-                            moveList.add(new ChessMove(pos, diag1, PieceType.KNIGHT));
-                            moveList.add(new ChessMove(pos, diag1, PieceType.ROOK));
+                            pawnPromotion(pos, diag1, moveList);
                         } else moveList.add(new ChessMove(pos, diag1, null));
                     }
                 }
@@ -547,10 +532,7 @@ public class ChessPiece {
                     diag2 = new ChessPosition(row - 1, col - 1);
                     if (occupied(board, diag2) && enemy) {
                         if (promotion) {
-                            moveList.add(new ChessMove(pos, diag2, PieceType.QUEEN));
-                            moveList.add(new ChessMove(pos, diag2, PieceType.BISHOP));
-                            moveList.add(new ChessMove(pos, diag2, PieceType.KNIGHT));
-                            moveList.add(new ChessMove(pos, diag2, PieceType.ROOK));
+                            pawnPromotion(pos, diag2, moveList);
                         } else moveList.add(new ChessMove(pos, diag2, null));
                     }
                 }
@@ -564,6 +546,13 @@ public class ChessPiece {
             return true;
         }
         return false;
+    }
+
+    private void pawnPromotion(ChessPosition start, ChessPosition end, Collection<ChessMove> moveList) {
+        moveList.add(new ChessMove(start, end, PieceType.QUEEN));
+        moveList.add(new ChessMove(start, end, PieceType.BISHOP));
+        moveList.add(new ChessMove(start, end, PieceType.KNIGHT));
+        moveList.add(new ChessMove(start, end, PieceType.ROOK));
     }
 
     @Override

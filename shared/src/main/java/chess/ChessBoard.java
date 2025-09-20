@@ -102,21 +102,26 @@ public class ChessBoard {
         var board_string = "";
         var piece_string = "";
         ChessPiece piece;
-        for (int i = 1; i < 9; i++) {
+        for (int i = 8; i > 0; i--) {
             for (int j = 1; j < 9; j++) {
-                piece = getPiece(new ChessPosition(j, i));
-                piece_string = piece.toString();
+                piece = getPiece(new ChessPosition(i, j));
                 if (j == 8) {
                     if (piece == null) {
                         board_string = board_string + "| |\n";
                     }
-                    else board_string = board_string + "|" + piece_string + "|\n";
+                    else {
+                        piece_string = piece.toString();
+                        board_string = board_string + "|" + piece_string + "|\n";
+                    }
                 }
                 else {
                     if (piece == null) {
                         board_string = board_string + "| ";
                     }
-                    board_string = board_string + "|" + piece_string;
+                    else {
+                        piece_string = piece.toString();
+                        board_string = board_string + "|" + piece_string;
+                    }
                 }
             }
         }
