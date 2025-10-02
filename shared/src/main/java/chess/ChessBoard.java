@@ -10,9 +10,11 @@ import java.util.Arrays;
  */
 public class ChessBoard {
 
-    final private ChessPiece[][] board = new ChessPiece[8][8];
+    private ChessPiece[][] board = new ChessPiece[8][8];
     public ChessBoard() {
-        
+    }
+    public ChessBoard(ChessBoard copy) {
+        board = Arrays.copyOf(copy.board, copy.board.length);
     }
 
     /**
@@ -36,6 +38,9 @@ public class ChessBoard {
         return board[pos.getRow() - 1][pos.getColumn() - 1];
     }
 
+    public void removePiece(ChessPosition pos) {
+        board[pos.getRow() - 1][pos.getColumn() - 1] = null;
+    }
     /**
      * Sets the board to the default starting board
      * (How the game of chess normally starts)
