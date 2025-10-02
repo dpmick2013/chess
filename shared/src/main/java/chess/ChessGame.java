@@ -126,6 +126,7 @@ public class ChessGame {
                 continue;
             }
             no_moves = false;
+            break;
         }
         if (no_moves) {
             return isInCheck(teamColor);
@@ -200,6 +201,16 @@ public class ChessGame {
                 if (test_piece == null) continue;
                 if (test_piece.getTeamColor() != teamColor) {
                     test_list = test_piece.pieceMoves(board, test_pos);
+                    if (test_piece.getPieceType() == ChessPiece.PieceType.PAWN) {
+                        if (test_piece.getTeamColor() == TeamColor.WHITE) {
+                            test_list.add(new ChessMove(test_pos, new ChessPosition(i + 1, j + 1), null));
+                            test_list.add(new ChessMove(test_pos, new ChessPosition(i + 1, j - 1), null));
+                        }
+                        else {
+                            test_list.add(new ChessMove(test_pos, new ChessPosition(i - 1, j + 1), null));
+                            test_list.add(new ChessMove(test_pos, new ChessPosition(i - 1, j - 1), null));
+                        }
+                    }
                     for (ChessMove move : test_list) {
                         move_pos = move.getEndPosition();
                         if (move_pos.getRow() == pos.getRow() && move_pos.getColumn() == pos.getColumn()) return true;
