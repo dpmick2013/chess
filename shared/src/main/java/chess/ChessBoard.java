@@ -14,7 +14,10 @@ public class ChessBoard {
     public ChessBoard() {
     }
     public ChessBoard(ChessBoard copy) {
-        board = Arrays.copyOf(copy.board, copy.board.length);
+        board = new ChessPiece[8][8];
+        for (int row = 0; row < 8; row++) {
+            board[row] = Arrays.copyOf(copy.board[row], copy.board.length);
+        }
     }
 
     /**

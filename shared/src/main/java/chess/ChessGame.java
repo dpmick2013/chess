@@ -11,7 +11,7 @@ import java.util.Objects;
  * signature of the existing methods.
  */
 public class ChessGame {
-    private final ChessBoard gameBoard = new ChessBoard();
+    private ChessBoard gameBoard = new ChessBoard();
     private TeamColor teamTurn = TeamColor.WHITE;
     public ChessGame() {
         gameBoard.resetBoard();
@@ -51,15 +51,16 @@ public class ChessGame {
     public Collection<ChessMove> validMoves(ChessPosition startPosition) {
         ChessPiece piece = gameBoard.getPiece(startPosition);
         if (piece == null) return null;
-        Collection<ChessMove> moves = piece.pieceMoves(gameBoard, startPosition);
+        Collection<ChessMove> moves = piece.pieceMoves(gameBoard, startPosition),
+                valid = piece.pieceMoves(gameBoard, startPosition);
         for (ChessMove move : moves) {
             try {
                 testMove(move);
             } catch (InvalidMoveException ex) {
-                moves.remove(move);
+                valid.remove(move);
             }
         }
-        return moves;
+        return valid;
     }
 
     /**
@@ -249,8 +250,13 @@ public class ChessGame {
     private void testMove(ChessMove move) throws InvalidMoveException {
         ChessBoard test_board = new ChessBoard(gameBoard);
         movePiece(move, test_board);
-        if (isInCheck(teamTurn)) {
-            throw new InvalidMoveException("Invalid move");
+//        if (isInCheck(teamTurn)) {
+//            gameBoard = new ChessBoard(test_board);
+//            throw new InvalidMoveException("Invalid move");
+//        }
+//        gameBoard = new ChessBoard(test_board);
+        if (isAttacked(test_board, findKing(teamTurn), teamTurn)) {
+            throw new InvalidMoveException();
         }
     }
 
