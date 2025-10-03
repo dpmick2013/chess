@@ -55,17 +55,17 @@ public class ChessPiece {
      */
     public Collection<ChessMove> pieceMoves(ChessBoard board, ChessPosition myPosition) {
         Collection<ChessMove> moveList = new HashSet<>();
-        if (getPieceType() == PieceType.KING) kingMoves(board, myPosition, moveList);
-        if (getPieceType() == PieceType.QUEEN) queenMoves(board, myPosition, moveList);
-        if (getPieceType() == PieceType.BISHOP) bishopMoves(board, myPosition, moveList);
-        if (getPieceType() == PieceType.KNIGHT) knightMoves(board, myPosition, moveList);
-        if (getPieceType() == PieceType.ROOK) rookMoves(board, myPosition, moveList);
-        if (getPieceType() == PieceType.PAWN) pawnMoves(board, myPosition, moveList);
+        if (getPieceType() == PieceType.KING) kingMoves(board, myPosition, moveList, false);
+        if (getPieceType() == PieceType.QUEEN) queenMoves(board, myPosition, moveList, false);
+        if (getPieceType() == PieceType.BISHOP) bishopMoves(board, myPosition, moveList, false);
+        if (getPieceType() == PieceType.KNIGHT) knightMoves(board, myPosition, moveList, false);
+        if (getPieceType() == PieceType.ROOK) rookMoves(board, myPosition, moveList, false);
+        if (getPieceType() == PieceType.PAWN) pawnMoves(board, myPosition, moveList, false);
         return moveList;
     }
 
     boolean enemy;
-    private void kingMoves(ChessBoard board, ChessPosition pos, Collection<ChessMove> moveList) {
+    private void kingMoves(ChessBoard board, ChessPosition pos, Collection<ChessMove> moveList, boolean test) {
         int row = pos.getRow();
         int col = pos.getColumn();
         ChessPosition end;
@@ -78,6 +78,7 @@ public class ChessPiece {
                     move = new ChessMove(pos, end, null);
                     moveList.add(move);
                 }
+                else if (test) moveList.add(new ChessMove(pos, end, null));
             }
             else {
                 move = new ChessMove(pos, end, null);
@@ -92,6 +93,7 @@ public class ChessPiece {
                     move = new ChessMove(pos, end, null);
                     moveList.add(move);
                 }
+                else if (test) moveList.add(new ChessMove(pos, end, null));
             }
             else {
                 move = new ChessMove(pos, end, null);
@@ -106,6 +108,7 @@ public class ChessPiece {
                     move = new ChessMove(pos, end, null);
                     moveList.add(move);
                 }
+                else if (test) moveList.add(new ChessMove(pos, end, null));
             }
             else {
                 move = new ChessMove(pos, end, null);
@@ -120,6 +123,7 @@ public class ChessPiece {
                     move = new ChessMove(pos, end, null);
                     moveList.add(move);
                 }
+                else if (test) moveList.add(new ChessMove(pos, end, null));
             }
             else {
                 move = new ChessMove(pos, end, null);
@@ -134,6 +138,7 @@ public class ChessPiece {
                     move = new ChessMove(pos, end, null);
                     moveList.add(move);
                 }
+                else if (test) moveList.add(new ChessMove(pos, end, null));
             }
             else {
                 move = new ChessMove(pos, end, null);
@@ -148,6 +153,7 @@ public class ChessPiece {
                     move = new ChessMove(pos, end, null);
                     moveList.add(move);
                 }
+                else if (test) moveList.add(new ChessMove(pos, end, null));
             }
             else {
                 move = new ChessMove(pos, end, null);
@@ -162,6 +168,8 @@ public class ChessPiece {
                     move = new ChessMove(pos, end, null);
                     moveList.add(move);
                 }
+                else if (test) moveList.add(new ChessMove(pos, end, null));
+
             }
             else {
                 move = new ChessMove(pos, end, null);
@@ -176,6 +184,7 @@ public class ChessPiece {
                     move = new ChessMove(pos, end, null);
                     moveList.add(move);
                 }
+                else if (test) moveList.add(new ChessMove(pos, end, null));
             }
             else {
                 move = new ChessMove(pos, end, null);
@@ -184,14 +193,17 @@ public class ChessPiece {
         }
     }
 
-    private void queenMoves(ChessBoard board, ChessPosition pos, Collection<ChessMove> moveList) {
+    private void queenMoves(ChessBoard board, ChessPosition pos, Collection<ChessMove> moveList, boolean test) {
         int row = pos.getRow();
         int col = pos.getColumn();
         // Up
         for (int i = 1; i < 8; i++) {
             if (row + i > 8) break;
             var end = new ChessPosition(row + i, col);
-            if (occupied(board, end) && !enemy) break;
+            if (occupied(board, end) && !enemy) {
+                if (test) moveList.add(new ChessMove(pos, end, null));
+                break;
+            }
             moveList.add(new ChessMove(pos, end, null));
             if (occupied(board, end)) break;
         }
@@ -200,7 +212,10 @@ public class ChessPiece {
             if (row + i > 8 || col + i > 8) break;
             var end = new ChessPosition(row + i, col + i);
             ChessMove move;
-            if (occupied(board, end) && !enemy) break;
+            if (occupied(board, end) && !enemy) {
+                if (test) moveList.add(new ChessMove(pos, end, null));
+                break;
+            }
             move = new ChessMove(pos, end, null);
             moveList.add(move);
             if (occupied(board, end)) break;
@@ -209,7 +224,10 @@ public class ChessPiece {
         for (int i = 1; i < 8; i++) {
             if (col + i > 8) break;
             var end = new ChessPosition(row, col + i);
-            if (occupied(board, end) && !enemy) break;
+            if (occupied(board, end) && !enemy) {
+                if (test) moveList.add(new ChessMove(pos, end, null));
+                break;
+            }
             moveList.add(new ChessMove(pos, end, null));
             if (occupied(board, end)) break;
         }
@@ -218,7 +236,10 @@ public class ChessPiece {
             if (row - i < 1 || col + i > 8) break;
             var end = new ChessPosition(row - i, col + i);
             ChessMove move;
-            if (occupied(board, end) && !enemy) break;
+            if (occupied(board, end) && !enemy) {
+                if (test) moveList.add(new ChessMove(pos, end, null));
+                break;
+            }
             move = new ChessMove(pos, end, null);
             moveList.add(move);
             if (occupied(board, end)) break;
@@ -227,7 +248,10 @@ public class ChessPiece {
         for (int i = 1; i < 8; i++) {
             if (row - i < 1) break;
             var end = new ChessPosition(row - i, col);
-            if (occupied(board, end) && !enemy) break;
+            if (occupied(board, end) && !enemy) {
+                if (test) moveList.add(new ChessMove(pos, end, null));
+                break;
+            }
             moveList.add(new ChessMove(pos, end, null));
             if (occupied(board, end)) break;
         }
@@ -236,7 +260,10 @@ public class ChessPiece {
             if (row - i < 1 || col - i < 1) break;
             var end = new ChessPosition(row - i, col - i);
             ChessMove move;
-            if (occupied(board, end) && !enemy) break;
+            if (occupied(board, end) && !enemy) {
+                if (test) moveList.add(new ChessMove(pos, end, null));
+                break;
+            }
             move = new ChessMove(pos, end, null);
             moveList.add(move);
             if (occupied(board, end)) break;
@@ -245,7 +272,10 @@ public class ChessPiece {
         for (int i = 1; i < 8; i++) {
             if (col - i < 1) break;
             var end = new ChessPosition(row, col - i);
-            if (occupied(board, end) && !enemy) break;
+            if (occupied(board, end) && !enemy) {
+                if (test) moveList.add(new ChessMove(pos, end, null));
+                break;
+            }
             moveList.add(new ChessMove(pos, end, null));
             if (occupied(board, end)) break;
         }
@@ -254,14 +284,17 @@ public class ChessPiece {
             if (row + i > 8 || col - i < 1) break;
             var end = new ChessPosition(row + i, col - i);
             ChessMove move;
-            if (occupied(board, end) && !enemy) break;
+            if (occupied(board, end) && !enemy) {
+                if (test) moveList.add(new ChessMove(pos, end, null));
+                break;
+            }
             move = new ChessMove(pos, end, null);
             moveList.add(move);
             if (occupied(board, end)) break;
         }
     }
 
-    private void bishopMoves(ChessBoard board, ChessPosition pos, Collection<ChessMove> moveList) {
+    private void bishopMoves(ChessBoard board, ChessPosition pos, Collection<ChessMove> moveList, boolean test) {
         int row = pos.getRow();
         int col = pos.getColumn();
         // Up Right
@@ -269,7 +302,10 @@ public class ChessPiece {
             if (row + i > 8 || col + i > 8) break;
             var end = new ChessPosition(row + i, col + i);
             ChessMove move;
-            if (occupied(board, end) && !enemy) break;
+            if (occupied(board, end) && !enemy) {
+                if (test) moveList.add(new ChessMove(pos, end, null));
+                break;
+            }
             move = new ChessMove(pos, end, null);
             moveList.add(move);
             if (occupied(board, end)) break;
@@ -279,7 +315,10 @@ public class ChessPiece {
             if (row - i < 1 || col + i > 8) break;
             var end = new ChessPosition(row - i, col + i);
             ChessMove move;
-            if (occupied(board, end) && !enemy) break;
+            if (occupied(board, end) && !enemy) {
+                if (test) moveList.add(new ChessMove(pos, end, null));
+                break;
+            }
             move = new ChessMove(pos, end, null);
             moveList.add(move);
             if (occupied(board, end)) break;
@@ -289,7 +328,10 @@ public class ChessPiece {
             if (row - i < 1 || col - i < 1) break;
             var end = new ChessPosition(row - i, col - i);
             ChessMove move;
-            if (occupied(board, end) && !enemy) break;
+            if (occupied(board, end) && !enemy) {
+                if (test) moveList.add(new ChessMove(pos, end, null));
+                break;
+            }
             move = new ChessMove(pos, end, null);
             moveList.add(move);
             if (occupied(board, end)) break;
@@ -299,14 +341,17 @@ public class ChessPiece {
             if (row + i > 8 || col - i < 1) break;
             var end = new ChessPosition(row + i, col - i);
             ChessMove move;
-            if (occupied(board, end) && !enemy) break;
+            if (occupied(board, end) && !enemy) {
+                if (test) moveList.add(new ChessMove(pos, end, null));
+                break;
+            }
             move = new ChessMove(pos, end, null);
             moveList.add(move);
             if (occupied(board, end)) break;
         }
     }
 
-    private void knightMoves(ChessBoard board, ChessPosition pos, Collection<ChessMove> moveList) {
+    private void knightMoves(ChessBoard board, ChessPosition pos, Collection<ChessMove> moveList, boolean test) {
         int row = pos.getRow();
         int col = pos.getColumn();
         ChessPosition end;
@@ -319,6 +364,7 @@ public class ChessPiece {
                     move = new ChessMove(pos, end, null);
                     moveList.add(move);
                 }
+                else if (test) moveList.add(new ChessMove(pos, end, null));
             }
             else {
                 move = new ChessMove(pos, end, null);
@@ -333,6 +379,7 @@ public class ChessPiece {
                     move = new ChessMove(pos, end, null);
                     moveList.add(move);
                 }
+                else if (test) moveList.add(new ChessMove(pos, end, null));
             }
             else {
                 move = new ChessMove(pos, end, null);
@@ -347,6 +394,7 @@ public class ChessPiece {
                     move = new ChessMove(pos, end, null);
                     moveList.add(move);
                 }
+                else if (test) moveList.add(new ChessMove(pos, end, null));
             }
             else {
                 move = new ChessMove(pos, end, null);
@@ -361,6 +409,7 @@ public class ChessPiece {
                     move = new ChessMove(pos, end, null);
                     moveList.add(move);
                 }
+                else if (test) moveList.add(new ChessMove(pos, end, null));
             }
             else {
                 move = new ChessMove(pos, end, null);
@@ -375,6 +424,7 @@ public class ChessPiece {
                     move = new ChessMove(pos, end, null);
                     moveList.add(move);
                 }
+                else if (test) moveList.add(new ChessMove(pos, end, null));
             }
             else {
                 move = new ChessMove(pos, end, null);
@@ -389,6 +439,7 @@ public class ChessPiece {
                     move = new ChessMove(pos, end, null);
                     moveList.add(move);
                 }
+                else if (test) moveList.add(new ChessMove(pos, end, null));
             }
             else {
                 move = new ChessMove(pos, end, null);
@@ -403,6 +454,7 @@ public class ChessPiece {
                     move = new ChessMove(pos, end, null);
                     moveList.add(move);
                 }
+                else if (test) moveList.add(new ChessMove(pos, end, null));
             }
             else {
                 move = new ChessMove(pos, end, null);
@@ -417,6 +469,7 @@ public class ChessPiece {
                     move = new ChessMove(pos, end, null);
                     moveList.add(move);
                 }
+                else if (test) moveList.add(new ChessMove(pos, end, null));
             }
             else {
                 move = new ChessMove(pos, end, null);
@@ -425,7 +478,7 @@ public class ChessPiece {
         }
     }
 
-    private void rookMoves(ChessBoard board, ChessPosition pos, Collection<ChessMove> moveList) {
+    private void rookMoves(ChessBoard board, ChessPosition pos, Collection<ChessMove> moveList, boolean test) {
         int row = pos.getRow();
         int col = pos.getColumn();
         // Up
@@ -459,7 +512,7 @@ public class ChessPiece {
         }
     }
 
-    private void pawnMoves(ChessBoard board, ChessPosition pos, Collection<ChessMove> moveList) {
+    private void pawnMoves(ChessBoard board, ChessPosition pos, Collection<ChessMove> moveList, boolean test) {
         int row = pos.getRow();
         int col = pos.getColumn();
         ChessPosition one_space;
@@ -491,6 +544,9 @@ public class ChessPiece {
                             pawnPromotion(pos, diag1, moveList);
                         } else moveList.add(new ChessMove(pos, diag1, null));
                     }
+                    else if (occupied(board, diag1) && test) {
+                        moveList.add(new ChessMove(pos, diag1, null));
+                    }
                 }
                 if (col - 1 >= 1) {
                     diag2 = new ChessPosition(row + 1, col - 1);
@@ -498,6 +554,9 @@ public class ChessPiece {
                         if (promotion) {
                             pawnPromotion(pos, diag2, moveList);
                         } else moveList.add(new ChessMove(pos, diag2, null));
+                    }
+                    else if (occupied(board, diag2) && test) {
+                        moveList.add(new ChessMove(pos, diag2, null));
                     }
                 }
             }
@@ -527,6 +586,9 @@ public class ChessPiece {
                             pawnPromotion(pos, diag1, moveList);
                         } else moveList.add(new ChessMove(pos, diag1, null));
                     }
+                    else if (occupied(board, diag1) && test) {
+                        moveList.add(new ChessMove(pos, diag1, null));
+                    }
                 }
                 if (col - 1 >= 1) {
                     diag2 = new ChessPosition(row - 1, col - 1);
@@ -534,6 +596,9 @@ public class ChessPiece {
                         if (promotion) {
                             pawnPromotion(pos, diag2, moveList);
                         } else moveList.add(new ChessMove(pos, diag2, null));
+                    }
+                    else if (occupied(board, diag2) && test) {
+                        moveList.add(new ChessMove(pos, diag2, null));
                     }
                 }
             }
@@ -553,6 +618,17 @@ public class ChessPiece {
         moveList.add(new ChessMove(start, end, PieceType.BISHOP));
         moveList.add(new ChessMove(start, end, PieceType.KNIGHT));
         moveList.add(new ChessMove(start, end, PieceType.ROOK));
+    }
+
+    public Collection<ChessMove> coveredSquares(ChessBoard board, ChessPosition myPosition) {
+        Collection<ChessMove> moveList = new HashSet<>();
+        if (getPieceType() == PieceType.KING) kingMoves(board, myPosition, moveList, true);
+        if (getPieceType() == PieceType.QUEEN) queenMoves(board, myPosition, moveList, true);
+        if (getPieceType() == PieceType.BISHOP) bishopMoves(board, myPosition, moveList, true);
+        if (getPieceType() == PieceType.KNIGHT) knightMoves(board, myPosition, moveList, true);
+        if (getPieceType() == PieceType.ROOK) rookMoves(board, myPosition, moveList, true);
+        if (getPieceType() == PieceType.PAWN) pawnMoves(board, myPosition, moveList, true);
+        return moveList;
     }
 
     @Override

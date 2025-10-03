@@ -200,7 +200,7 @@ public class ChessGame {
                 test_piece = board.getPiece(test_pos);
                 if (test_piece == null) continue;
                 if (test_piece.getTeamColor() != teamColor) {
-                    test_list = test_piece.pieceMoves(board, test_pos);
+                    test_list = test_piece.coveredSquares(board, test_pos);
                     if (test_piece.getPieceType() == ChessPiece.PieceType.PAWN) {
                         if (test_piece.getTeamColor() == TeamColor.WHITE) {
                             test_list.add(new ChessMove(test_pos, new ChessPosition(i + 1, j + 1), null));
