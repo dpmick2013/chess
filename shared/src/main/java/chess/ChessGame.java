@@ -86,7 +86,7 @@ public class ChessGame {
      * @return True if the specified team is in check
      */
     public boolean isInCheck(TeamColor teamColor) {
-        ChessPosition king_pos = findKing(teamColor);
+        ChessPosition king_pos = findKing(gameBoard, teamColor);
         return isAttacked(gameBoard, king_pos, teamColor);
     }
 
@@ -98,7 +98,7 @@ public class ChessGame {
      */
     public boolean isInCheckmate(TeamColor teamColor) {
         boolean no_moves = false;
-        ChessPosition king_pos = findKing(teamColor);
+        ChessPosition king_pos = findKing(gameBoard, teamColor);
         ChessPosition move_pos;
         ChessPiece king = gameBoard.getPiece(king_pos);
         Collection<ChessMove> moves = king.pieceMoves(gameBoard, king_pos);
@@ -126,7 +126,7 @@ public class ChessGame {
      */
     public boolean isInStalemate(TeamColor teamColor) {
         boolean no_moves = false;
-        ChessPosition king_pos = findKing(teamColor);
+        ChessPosition king_pos = findKing(gameBoard, teamColor);
         ChessPosition move_pos;
         ChessPiece king = gameBoard.getPiece(king_pos);
         Collection<ChessMove> moves = king.pieceMoves(gameBoard, king_pos);
@@ -171,13 +171,13 @@ public class ChessGame {
         return gameBoard;
     }
 
-    private ChessPosition findKing(TeamColor team) {
+    private ChessPosition findKing(ChessBoard board, TeamColor team) {
         ChessPiece test_piece;
         ChessPosition test_pos;
         for (int i = 1; i < 9; i++) {
             for (int j = 1; j < 9; j++) {
                 test_pos = new ChessPosition(i, j);
-                test_piece = gameBoard.getPiece(test_pos);
+                test_piece = board.getPiece(test_pos);
                 if (test_piece == null) continue;
                 if (test_piece.getPieceType() == ChessPiece.PieceType.KING) {
                     if (test_piece.getTeamColor() == team) {
@@ -233,7 +233,7 @@ public class ChessGame {
         ChessBoard test_board = new ChessBoard(gameBoard);
         TeamColor color = test_board.getPiece(move.getStartPosition()).getTeamColor();
         movePiece(move, test_board);
-        if (isAttacked(test_board, findKing(color), color)) {
+        if (isAttacked(test_board, findKing(test_board, color), color)) {
             throw new InvalidMoveException();
         }
     }
