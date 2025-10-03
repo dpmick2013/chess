@@ -11,7 +11,7 @@ import java.util.Objects;
  * signature of the existing methods.
  */
 public class ChessGame {
-    private ChessBoard gameBoard = new ChessBoard();
+    private final ChessBoard gameBoard = new ChessBoard();
     private TeamColor teamTurn = TeamColor.WHITE;
     public ChessGame() {
         gameBoard.resetBoard();
@@ -87,25 +87,7 @@ public class ChessGame {
      */
     public boolean isInCheck(TeamColor teamColor) {
         ChessPosition king_pos = findKing(teamColor);
-//        ChessPosition test_pos;
-//        ChessPosition move_pos;
-//        ChessPiece test_piece;
-//        Collection<ChessMove> test_list;
         return isAttacked(gameBoard, king_pos, teamColor);
-//        for (int i = 1; i < 9; i++) {
-//            for (int j = 1; j < 9; j++) {
-//                test_pos = new ChessPosition(i, j);
-//                test_piece = gameBoard.getPiece(test_pos);
-//                if (test_piece == null) continue;
-//                if (test_piece.getTeamColor() != teamColor) {
-//                    test_list = test_piece.pieceMoves(gameBoard, test_pos);
-//                    for (ChessMove move : test_list) {
-//                        move_pos = move.getEndPosition();
-//                        if (move_pos.getRow() == king_pos.getRow() && move_pos.getColumn() == king_pos.getColumn()) return true;
-//                    }
-//                }
-//            }
-//        }
     }
 
     /**
@@ -249,13 +231,9 @@ public class ChessGame {
 
     private void testMove(ChessMove move) throws InvalidMoveException {
         ChessBoard test_board = new ChessBoard(gameBoard);
+        TeamColor color = test_board.getPiece(move.getStartPosition()).getTeamColor();
         movePiece(move, test_board);
-//        if (isInCheck(teamTurn)) {
-//            gameBoard = new ChessBoard(test_board);
-//            throw new InvalidMoveException("Invalid move");
-//        }
-//        gameBoard = new ChessBoard(test_board);
-        if (isAttacked(test_board, findKing(teamTurn), teamTurn)) {
+        if (isAttacked(test_board, findKing(color), color)) {
             throw new InvalidMoveException();
         }
     }
