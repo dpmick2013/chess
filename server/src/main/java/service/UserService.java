@@ -3,6 +3,7 @@ package service;
 import dataaccess.DataAccess;
 import datamodel.AuthData;
 import datamodel.UserData;
+import exception.AlreadyTakenException;
 
 import java.util.UUID;
 
@@ -12,7 +13,7 @@ public class UserService {
         this.dataAccess = dataAccess;
     }
 
-    public AuthData register(UserData user) throws Exception {
+    public AuthData register(UserData user) throws AlreadyTakenException {
         var userCheck = user.username();
         if (dataAccess.getUser(userCheck) != null) {
             throw new AlreadyTakenException();

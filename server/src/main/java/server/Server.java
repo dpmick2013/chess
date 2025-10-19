@@ -7,8 +7,8 @@ import datamodel.AuthData;
 import datamodel.UserData;
 import io.javalin.*;
 import io.javalin.http.Context;
+import exception.AlreadyTakenException;
 import service.UserService;
-
 import java.util.Map;
 
 public class Server {
@@ -16,7 +16,7 @@ public class Server {
     private final Javalin server;
 
     private final UserService userService;
-    private DataAccess dataAccess;
+    private final DataAccess dataAccess;
 
     public Server() {
         dataAccess = new MemoryDataAccess();
@@ -33,13 +33,17 @@ public class Server {
     private void register(Context ctx) {
         var serializer = new Gson();
         var req = serializer.fromJson(ctx.body(), UserData.class);
+        if (req.username() == null || req.email() == null || req.password() == null) {
+            ctx.status(400);
+            ctx.result(serializer.toJson(Map.of("message", "Error: bad request")));
+            return;
+        }
         AuthData res = null;
         try {
             res = userService.register(req);
-        } catch (Exception e) {
-//      "403\n{\"message\": \"Error: already taken\"}"
+        } catch (AlreadyTakenException ex) {
             ctx.status(403);
-            ctx.result(serializer.toJson(Map.of("message", "Error: already taken")));
+            ctx.result(ex.toJson());
         }
         if (res != null) {
             var regResult = serializer.toJson(res);
