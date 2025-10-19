@@ -5,6 +5,7 @@ import dataaccess.DataAccess;
 import dataaccess.MemoryDataAccess;
 import datamodel.AuthData;
 import datamodel.UserData;
+import exception.UnauthorizedException;
 import io.javalin.*;
 import io.javalin.http.Context;
 import exception.AlreadyTakenException;
@@ -25,6 +26,7 @@ public class Server {
 
         server.delete("db", ctx -> ctx.result("{}"));
         server.post("user", this::register);
+        server.post("session", this::login);
 
         // Register your endpoints and exception handlers here.
 
@@ -38,16 +40,33 @@ public class Server {
             ctx.result(serializer.toJson(Map.of("message", "Error: bad request")));
             return;
         }
-        AuthData res = null;
+        AuthData res;
         try {
             res = userService.register(req);
+            var regResult = serializer.toJson(res);
+            ctx.result(regResult);
         } catch (AlreadyTakenException ex) {
             ctx.status(403);
             ctx.result(ex.toJson());
         }
-        if (res != null) {
-            var regResult = serializer.toJson(res);
-            ctx.result(regResult);
+    }
+
+    private void login(Context ctx) {
+        var serializer = new Gson();
+        var req = serializer.fromJson(ctx.body(), UserData.class);
+        if (req.username() == null|| req.password() == null) {
+            ctx.status(400);
+            ctx.result(serializer.toJson(Map.of("message", "Error: bad request")));
+            return;
+        }
+        AuthData res;
+        try {
+            res = userService.login(req);
+            var loginResult = serializer.toJson(res);
+            ctx.result(loginResult);
+        } catch (UnauthorizedException ex) {
+            ctx.status(401);
+            ctx.result(ex.toJson());
         }
     }
 
