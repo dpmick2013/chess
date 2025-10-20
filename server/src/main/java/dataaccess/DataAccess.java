@@ -10,6 +10,7 @@ public interface DataAccess {
     UserData getUser(String username);
     void createAuth(AuthData auth);
     AuthData getAuth(String username);
+    void deleteAuth(String authToken);
     void storeGame(GameData game);
     GameData getGame(Integer gameID);
 }

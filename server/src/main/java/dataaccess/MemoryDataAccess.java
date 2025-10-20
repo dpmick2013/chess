@@ -29,12 +29,16 @@ public class MemoryDataAccess implements DataAccess {
 
     @Override
     public void createAuth(AuthData auth) {
-        auths.put(auth.username(), auth);
+        auths.put(auth.authToken(), auth);
     }
 
     @Override
-    public AuthData getAuth(String username) {
-        return auths.get(username);
+    public AuthData getAuth(String authToken) {
+        return auths.get(authToken);
+    }
+
+    public void deleteAuth(String authToken) {
+        auths.remove(authToken);
     }
 
     @Override

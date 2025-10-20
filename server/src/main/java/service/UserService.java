@@ -41,6 +41,14 @@ public class UserService {
         return authData;
     }
 
+    public void logout(String authToken) throws UnauthorizedException {
+        var authData = dataAccess.getAuth(authToken);
+        if (authData == null) {
+            throw new UnauthorizedException("Error: unauthorized");
+        }
+        dataAccess.deleteAuth(authToken);
+    }
+
     public static String generateAuthToken() {
         return UUID.randomUUID().toString();
     }

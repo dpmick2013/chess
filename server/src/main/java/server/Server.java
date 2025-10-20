@@ -27,6 +27,7 @@ public class Server {
         server.delete("db", ctx -> ctx.result("{}"));
         server.post("user", this::register);
         server.post("session", this::login);
+        server.delete("session", this::logout);
 
         // Register your endpoints and exception handlers here.
 
@@ -64,6 +65,19 @@ public class Server {
             res = userService.login(req);
             var loginResult = serializer.toJson(res);
             ctx.result(loginResult);
+        } catch (UnauthorizedException ex) {
+            ctx.status(401);
+            ctx.result(ex.toJson());
+        }
+    }
+
+    private void logout(Context ctx) {
+        var serializer = new Gson();
+        var req = serializer.fromJson(ctx.header("Authorization"), String.class);
+        try {
+            userService.logout(req);
+            ctx.status(200);
+            ctx.result("{}");
         } catch (UnauthorizedException ex) {
             ctx.status(401);
             ctx.result(ex.toJson());
