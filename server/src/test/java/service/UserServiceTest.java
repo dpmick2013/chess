@@ -2,10 +2,13 @@ package service;
 
 import dataaccess.MemoryDataAccess;
 import datamodel.AuthData;
+import datamodel.GameData;
 import datamodel.UserData;
 import exception.AlreadyTakenException;
 import exception.UnauthorizedException;
 import org.junit.jupiter.api.*;
+
+import java.util.ArrayList;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -76,5 +79,29 @@ class UserServiceTest {
         var authToken = res.authToken();
         assertDoesNotThrow(() -> service.logout(authToken));
         assertThrows(UnauthorizedException.class, () -> service.logout(authToken));
+    }
+
+    @Test
+    void listGames() throws Exception {
+        var existingUser = new UserData("existing", "password", "email@email");
+        var da = new MemoryDataAccess();
+        var service = new UserService(da);
+        var res = service.register(existingUser);
+        var authToken = res.authToken();
+        da.createGame(new GameData(1, null, null, "test"));
+        ArrayList<GameData> gameList = service.listGames(authToken);
+        assertNotNull(gameList);
+        assertEquals(da.getGameList(), gameList);
+    }
+
+    @Test
+    void createGame() throws Exception {
+        var existingUser = new UserData("existing", "password", "email@email");
+        var da = new MemoryDataAccess();
+        var service = new UserService(da);
+        var res = service.register(existingUser);
+        var authToken = res.authToken();
+        var createResult = service.createGame(authToken, "test");
+        assertNotNull(createResult);
     }
 }

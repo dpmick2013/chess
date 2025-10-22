@@ -2,8 +2,10 @@ package dataaccess;
 
 import datamodel.AuthData;
 import datamodel.GameData;
+import datamodel.GameList;
 import datamodel.UserData;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 
 public class MemoryDataAccess implements DataAccess {
@@ -42,12 +44,18 @@ public class MemoryDataAccess implements DataAccess {
     }
 
     @Override
-    public void storeGame(GameData game) {
+    public void createGame(GameData game) {
         games.put(game.gameID(), game);
     }
 
     @Override
     public GameData getGame(Integer gameID) {
         return games.get(gameID);
+    }
+
+    @Override
+    public ArrayList<GameData> getGameList() {
+//        return new ArrayList<>(games.values());
+        return new GameList(games.values());
     }
 }
