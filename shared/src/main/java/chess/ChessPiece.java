@@ -257,7 +257,6 @@ public class ChessPiece {
         int row = pos.getRow();
         int col = pos.getColumn();
         ChessPosition end;
-        ChessMove move;
         // Up Right
         if (row + 2 <= 8 && col + 1 <= 8) {
             end = new ChessPosition(row + 2, col + 1);
