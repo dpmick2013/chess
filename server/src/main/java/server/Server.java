@@ -1,8 +1,6 @@
 package server;
 
 import com.google.gson.Gson;
-import com.google.gson.JsonObject;
-import com.google.gson.JsonParser;
 import dataaccess.DataAccess;
 import dataaccess.MemoryDataAccess;
 import datamodel.AuthData;
@@ -10,10 +8,10 @@ import datamodel.GameData;
 import datamodel.JoinRequest;
 import datamodel.UserData;
 import exception.ServerException;
-import exception.UnauthorizedException;
 import io.javalin.*;
 import io.javalin.http.Context;
-import exception.AlreadyTakenException;
+import service.AdminService;
+import service.GameService;
 import service.UserService;
 import java.util.Map;
 
@@ -22,11 +20,14 @@ public class Server {
     private final Javalin server;
 
     private final UserService userService;
-    private final DataAccess dataAccess;
+    private final GameService gameService;
+    private final AdminService adminService;
 
     public Server() {
-        dataAccess = new MemoryDataAccess();
+        DataAccess dataAccess = new MemoryDataAccess();
         userService = new UserService(dataAccess);
+        gameService = new GameService(dataAccess);
+        adminService = new AdminService(dataAccess);
         server = Javalin.create(config -> config.staticFiles.add("web"));
 
         server.delete("db", this::clear);
@@ -48,7 +49,7 @@ public class Server {
     }
 
     private void clear(Context ctx) {
-        userService.clear();
+        adminService.clear();
         ctx.status(200);
         ctx.result("{}");
     }
@@ -73,7 +74,6 @@ public class Server {
     }
 
     private void logout(Context ctx) throws Exception {
-        var serializer = new Gson();
         var req = ctx.header("Authorization");
         userService.logout(req);
         ctx.status(200);
@@ -83,7 +83,7 @@ public class Server {
     private void listGames(Context ctx) throws Exception {
         var serializer = new Gson();
         var req = ctx.header("Authorization");
-        var res = userService.listGames(req);
+        var res = gameService.listGames(req);
         ctx.status(200);
         ctx.result(serializer.toJson(Map.of("games", res)));
     }
@@ -92,7 +92,7 @@ public class Server {
         var serializer = new Gson();
         var auth = ctx.header("Authorization");
         var name = serializer.fromJson(ctx.body(), GameData.class);
-        var gameID = userService.createGame(auth, name.gameName());
+        var gameID = gameService.createGame(auth, name.gameName());
         ctx.status(200);
         ctx.result(serializer.toJson(Map.of("gameID", gameID)));
     }
@@ -101,7 +101,7 @@ public class Server {
         var serializer = new Gson();
         var auth = ctx.header("Authorization");
         var req = serializer.fromJson(ctx.body(), JoinRequest.class);
-        userService.joinGame(auth, req.playerColor(), req.gameID());
+        gameService.joinGame(auth, req.playerColor(), req.gameID());
         ctx.status(200);
         ctx.result("{}");
     }

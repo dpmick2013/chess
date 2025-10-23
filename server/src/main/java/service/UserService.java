@@ -8,10 +8,8 @@ import datamodel.UserData;
 import exception.AlreadyTakenException;
 import exception.BadRequestException;
 import exception.UnauthorizedException;
-import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
-import java.util.Map;
 import java.util.Objects;
 import java.util.UUID;
 
@@ -79,8 +77,7 @@ public class UserService {
         if (dataAccess.getAuth(authToken) == null) {
             throw new UnauthorizedException("Error: unauthorized");
         }
-        var gameID = dataAccess.createGame(name);
-        return gameID;
+        return dataAccess.createGame(name);
     }
 
     public void joinGame(String authToken, String color, Integer gameID) throws UnauthorizedException, AlreadyTakenException, BadRequestException {
