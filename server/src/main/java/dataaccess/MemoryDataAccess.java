@@ -59,22 +59,27 @@ public class MemoryDataAccess implements DataAccess {
 
     @Override
     public ArrayList<GameData> getGameList() {
-//        return new ArrayList<>(games.values());
         return new GameList(games.values());
     }
 
     @Override
     public String getPlayer(ChessGame.TeamColor color, GameData game) {
-        if (color == ChessGame.TeamColor.WHITE) return game.whiteUsername();
-        else return game.blackUsername();
+        if (color == ChessGame.TeamColor.WHITE) {
+            return game.whiteUsername();
+        }
+        else {
+            return game.blackUsername();
+        }
     }
 
     @Override
     public void joinGame(ChessGame.TeamColor color, String username, Integer gameID) {
         var game = games.get(gameID);
-        if (color == ChessGame.TeamColor.WHITE)
+        if (color == ChessGame.TeamColor.WHITE) {
             games.replace(gameID, new GameData(gameID, username, game.blackUsername(), game.gameName(), game.game()));
-        else
+        }
+        else {
             games.replace(gameID, new GameData(gameID, game.whiteUsername(), username, game.gameName(), game.game()));
+        }
     }
 }

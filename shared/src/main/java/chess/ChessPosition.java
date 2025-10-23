@@ -36,32 +36,32 @@ public class ChessPosition {
 
     @Override
     public String toString() {
-        String col_string = "";
+        String colString = "";
         if (col == 1) {
-            col_string = "A";
+            colString = "A";
         }
         if (col == 2) {
-            col_string = "B";
+            colString = "B";
         }
         if (col == 3) {
-            col_string = "C";
+            colString = "C";
         }
         if (col == 4) {
-            col_string = "D";
+            colString = "D";
         }
         if (col == 5) {
-            col_string = "E";
+            colString = "E";
         }
         if (col == 6) {
-            col_string = "F";
+            colString = "F";
         }
         if (col == 7) {
-            col_string = "G";
+            colString = "G";
         }
         if (col == 8) {
-            col_string = "H";
+            colString = "H";
         }
-        return col_string + row;
+        return colString + row;
     }
 
     @Override

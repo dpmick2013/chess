@@ -124,133 +124,33 @@ public class ChessPiece {
     }
 
     private void queenMoves(ChessBoard board, ChessPosition pos, Collection<ChessMove> moveList, boolean test) {
-        int row = pos.getRow();
-        int col = pos.getColumn();
         // Up
-        for (int i = 1; i < 8; i++) {
-            if (row + i > 8) {
-                break;
-            }
-            boolean done = moveDirection(pos, i, 0, board, moveList, test);
-            if (done) {
-                break;
-            }
-        }
+        moveDirection(pos, 1, 0, board, moveList, test);
         // Up Right
-        for (int i = 1; i < 8; i++) {
-            if (row + i > 8 || col + i > 8) {
-                break;
-            }
-            boolean done = moveDirection(pos, i, i, board, moveList, test);
-            if (done) {
-                break;
-            }
-        }
+        moveDirection(pos, 1, 1, board, moveList, test);
         // Right
-        for (int i = 1; i < 8; i++) {
-            if (col + i > 8) {
-                break;
-            }
-            boolean done = moveDirection(pos, 0, i, board, moveList, test);
-            if (done) {
-                break;
-            }
-        }
+        moveDirection(pos, 0, 1, board, moveList, test);
         // Down Right
-        for (int i = 1; i < 8; i++) {
-            if (row - i < 1 || col + i > 8) {
-                break;
-            }
-            boolean done = moveDirection(pos, -i, i, board, moveList, test);
-            if (done) {
-                break;
-            }
-        }
+        moveDirection(pos, -1, 1, board, moveList, test);
         // Down
-        for (int i = 1; i < 8; i++) {
-            if (row - i < 1) {
-                break;
-            }
-            boolean done = moveDirection(pos, -i, 0, board, moveList, test);
-            if (done) {
-                break;
-            }
-        }
+        moveDirection(pos, -1, 0, board, moveList, test);
         // Down Left
-        for (int i = 1; i < 8; i++) {
-            if (row - i < 1 || col - i < 1) {
-                break;
-            }
-            boolean done = moveDirection(pos, -i, -i, board, moveList, test);
-            if (done) {
-                break;
-            }
-        }
+        moveDirection(pos, -1, -1, board, moveList, test);
         // Left
-        for (int i = 1; i < 8; i++) {
-            if (col - i < 1) {
-                break;
-            }
-            boolean done = moveDirection(pos, 0, -i, board, moveList, test);
-            if (done) {
-                break;
-            }
-        }
+        moveDirection(pos, 0, -1, board, moveList, test);
         // Up Left
-        for (int i = 1; i < 8; i++) {
-            if (row + i > 8 || col - i < 1) {
-                break;
-            }
-            boolean done = moveDirection(pos, i, -i, board, moveList, test);
-            if (done) {
-                break;
-            }
-        }
+        moveDirection(pos, 1, -1, board, moveList, test);
     }
 
     private void bishopMoves(ChessBoard board, ChessPosition pos, Collection<ChessMove> moveList, boolean test) {
-        int row = pos.getRow();
-        int col = pos.getColumn();
         // Up Right
-        for (int i = 1; i < 8; i++) {
-            if (row + i > 8 || col + i > 8) {
-                break;
-            }
-            boolean done = moveDirection(pos, i, i, board, moveList, test);
-            if (done) {
-                break;
-            }
-        }
+        moveDirection(pos, 1, 1, board, moveList, test);
         // Down Right
-        for (int i = 1; i < 8; i++) {
-            if (row - i < 1 || col + i > 8) {
-                break;
-            }
-            boolean done = moveDirection(pos, -i, i, board, moveList, test);
-            if (done) {
-                break;
-            }
-        }
+        moveDirection(pos, -1, 1, board, moveList, test);
         // Down Left
-        for (int i = 1; i < 8; i++) {
-            if (row - i < 1 || col - i < 1) {
-                break;
-            }
-            boolean done = moveDirection(pos, -i, -i, board, moveList, test);
-            if (done) {
-                break;
-            }
-        }
+        moveDirection(pos, -1, -1, board, moveList, test);
         // Up Left
-        for (int i = 1; i < 8; i++) {
-            if (row + i > 8 || col - i < 1) {
-                break;
-            }
-            boolean done = moveDirection(pos, i, -i, board, moveList, test);
-            if (done) {
-                break;
-            }
-        }
+        moveDirection(pos, 1, -1, board, moveList, test);
     }
 
     private void knightMoves(ChessBoard board, ChessPosition pos, Collection<ChessMove> moveList, boolean test) {
@@ -300,48 +200,14 @@ public class ChessPiece {
     }
 
     private void rookMoves(ChessBoard board, ChessPosition pos, Collection<ChessMove> moveList, boolean test) {
-        int row = pos.getRow();
-        int col = pos.getColumn();
         // Up
-        for (int i = 1; i < 8; i++) {
-            if (row + i > 8) {
-                break;
-            }
-            boolean done = moveDirection(pos, i, 0, board, moveList, test);
-            if (done) {
-                break;
-            }
-        }
+        moveDirection(pos, 1, 0, board, moveList, test);
         // Right
-        for (int i = 1; i < 8; i++) {
-            if (col + i > 8) {
-                break;
-            }
-            boolean done = moveDirection(pos, 0, i, board, moveList, test);
-            if (done) {
-                break;
-            }
-        }
+        moveDirection(pos, 0, 1, board, moveList, test);
         // Down
-        for (int i = 1; i < 8; i++) {
-            if (row - i < 1) {
-                break;
-            }
-            boolean done = moveDirection(pos, -i, 0, board, moveList, test);
-            if (done) {
-                break;
-            }
-        }
+        moveDirection(pos, -1, 0, board, moveList, test);
         // Left
-        for (int i = 1; i < 8; i++) {
-            if (col - i < 1) {
-                break;
-            }
-            boolean done = moveDirection(pos, 0, -i, board, moveList, test);
-            if (done) {
-                break;
-            }
-        }
+        moveDirection(pos, 0, -1, board, moveList, test);
     }
 
     private void pawnMoves(ChessBoard board, ChessPosition pos, Collection<ChessMove> moveList, boolean test) {
@@ -378,7 +244,9 @@ public class ChessPiece {
                 if (!occupied(board, oneSpace)) {
                     if (promotion) {
                         pawnPromotion(pos, oneSpace, list);
-                    } else list.add(new ChessMove(pos, oneSpace, null));
+                    } else {
+                        list.add(new ChessMove(pos, oneSpace, null));
+                    }
                 }
             }
             if (col + 1 <= 8) {
@@ -386,7 +254,9 @@ public class ChessPiece {
                 if (occupied(board, diagonal1) && enemy) {
                     if (promotion) {
                         pawnPromotion(pos, diagonal1, list);
-                    } else list.add(new ChessMove(pos, diagonal1, null));
+                    } else {
+                        list.add(new ChessMove(pos, diagonal1, null));
+                    }
                 } else if (occupied(board, diagonal1) && test) {
                     list.add(new ChessMove(pos, diagonal1, null));
                 }
@@ -396,7 +266,9 @@ public class ChessPiece {
                 if (occupied(board, diagonal2) && enemy) {
                     if (promotion) {
                         pawnPromotion(pos, diagonal2, list);
-                    } else list.add(new ChessMove(pos, diagonal2, null));
+                    } else {
+                        list.add(new ChessMove(pos, diagonal2, null));
+                    }
                 } else if (occupied(board, diagonal2) && test) {
                     list.add(new ChessMove(pos, diagonal2, null));
                 }
@@ -404,18 +276,25 @@ public class ChessPiece {
         }
     }
 
-    private boolean moveDirection(ChessPosition pos, int rowChange, int colChange, ChessBoard board, Collection<ChessMove> list, boolean test) {
+    private void moveDirection(ChessPosition pos, int rowChange, int colChange, ChessBoard board, Collection<ChessMove> list, boolean test) {
         var row = pos.getRow();
         var col = pos.getColumn();
-        var end = new ChessPosition(row + rowChange, col + colChange);
-        if (occupied(board, end) && !enemy) {
-            if (test) {
-                list.add(new ChessMove(pos, end, null));
+        for (int i = 1; i < 8; i++) {
+            if (row + (i * rowChange) > 8 || col + (i * colChange) > 8 || row + (i * rowChange) < 1 || col + (i * colChange) < 1) {
+                break;
             }
-            return true;
+            var end = new ChessPosition(row + (i * rowChange), col + (i * colChange));
+            if (occupied(board, end) && !enemy) {
+                if (test) {
+                    list.add(new ChessMove(pos, end, null));
+                }
+                break;
+            }
+            list.add(new ChessMove(pos, end, null));
+            if (occupied(board, end)) {
+                break;
+            }
         }
-        list.add(new ChessMove(pos, end, null));
-        return occupied(board, end);
     }
 
     private boolean occupied(ChessBoard board, ChessPosition pos) {
@@ -449,34 +328,34 @@ public class ChessPiece {
 
     public Collection<ChessMove> coveredSquares(ChessBoard board, ChessPosition myPosition) {
         Collection<ChessMove> moveList = new HashSet<>();
-        if (getPieceType() == PieceType.KING) kingMoves(board, myPosition, moveList, true);
-        if (getPieceType() == PieceType.QUEEN) queenMoves(board, myPosition, moveList, true);
-        if (getPieceType() == PieceType.BISHOP) bishopMoves(board, myPosition, moveList, true);
-        if (getPieceType() == PieceType.KNIGHT) knightMoves(board, myPosition, moveList, true);
-        if (getPieceType() == PieceType.ROOK) rookMoves(board, myPosition, moveList, true);
-        if (getPieceType() == PieceType.PAWN) pawnMoves(board, myPosition, moveList, true);
+        if (getPieceType() == PieceType.KING) {
+            kingMoves(board, myPosition, moveList, true);
+        }
+        if (getPieceType() == PieceType.QUEEN) {
+            queenMoves(board, myPosition, moveList, true);
+        }
+        if (getPieceType() == PieceType.BISHOP) {
+            bishopMoves(board, myPosition, moveList, true);
+        }
+        if (getPieceType() == PieceType.KNIGHT) {
+            knightMoves(board, myPosition, moveList, true);
+        }
+        if (getPieceType() == PieceType.ROOK) {
+            rookMoves(board, myPosition, moveList, true);
+        }
+        if (getPieceType() == PieceType.PAWN) {
+            pawnMoves(board, myPosition, moveList, true);
+        }
         return moveList;
     }
 
     @Override
     public String toString() {
-        if (getTeamColor() == ChessGame.TeamColor.WHITE) {
-            if (getPieceType() == PieceType.PAWN) return "P";
-            if (getPieceType() == PieceType.ROOK) return "R";
-            if (getPieceType() == PieceType.KNIGHT) return "N";
-            if (getPieceType() == PieceType.BISHOP) return "B";
-            if (getPieceType() == PieceType.QUEEN) return "Q";
-            if (getPieceType() == PieceType.KING) return "K";
-        }
-        if (getTeamColor() == ChessGame.TeamColor.BLACK) {
-            if (getPieceType() == PieceType.PAWN) return "p";
-            if (getPieceType() == PieceType.ROOK) return "r";
-            if (getPieceType() == PieceType.KNIGHT) return "n";
-            if (getPieceType() == PieceType.BISHOP) return "b";
-            if (getPieceType() == PieceType.QUEEN) return "q";
-            if (getPieceType() == PieceType.KING) return "k";
-        }
-        return "";
+        return "ChessPiece{" +
+                "pieceColor=" + pieceColor +
+                ", type=" + type +
+                ", enemy=" + enemy +
+                '}';
     }
 
     @Override
