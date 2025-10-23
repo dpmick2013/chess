@@ -3,7 +3,7 @@ package service;
 import dataaccess.DataAccess;
 
 public class AdminService {
-    private DataAccess dataAccess;
+    private final DataAccess dataAccess;
 
     public AdminService(DataAccess dataAccess) {
         this.dataAccess = dataAccess;

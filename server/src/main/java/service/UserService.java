@@ -19,10 +19,6 @@ public class UserService {
         this.dataAccess = dataAccess;
     }
 
-    public void clear() {
-        dataAccess.clear();
-    }
-
     public AuthData register(UserData user) throws Exception {
         if (user.username() == null || user.password() == null || user.email() == null) {
             throw new BadRequestException("Error: bad request");
@@ -61,48 +57,6 @@ public class UserService {
             throw new UnauthorizedException("Error: unauthorized");
         }
         dataAccess.deleteAuth(authToken);
-    }
-
-    public ArrayList<GameData> listGames(String authToken) throws UnauthorizedException {
-        if (dataAccess.getAuth(authToken) == null) {
-            throw new UnauthorizedException("Error: unauthorized");
-        }
-        return dataAccess.getGameList();
-    }
-
-    public int createGame(String authToken, String name) throws UnauthorizedException, BadRequestException {
-        if (name == null) {
-            throw new BadRequestException("Error: bad request");
-        }
-        if (dataAccess.getAuth(authToken) == null) {
-            throw new UnauthorizedException("Error: unauthorized");
-        }
-        return dataAccess.createGame(name);
-    }
-
-    public void joinGame(String authToken, String color, Integer gameID) throws UnauthorizedException, AlreadyTakenException, BadRequestException {
-        if (!Objects.equals(color, "BLACK") && !Objects.equals(color, "WHITE")) {
-            throw new BadRequestException("Error: bad request");
-        }
-        var auth = dataAccess.getAuth(authToken);
-        if (auth == null) {
-            throw new UnauthorizedException("Error: unauthorized");
-        }
-        var game = dataAccess.getGame(gameID);
-        if (game == null) {
-            throw new BadRequestException("Error: game does not exist");
-        }
-        ChessGame.TeamColor playerColor = null;
-        if (Objects.equals(color, "WHITE")) {
-            playerColor = ChessGame.TeamColor.WHITE;
-        }
-        else if (Objects.equals(color, "BLACK")){
-            playerColor = ChessGame.TeamColor.BLACK;
-        }
-        if (dataAccess.getPlayer(playerColor, game) != null) {
-            throw new AlreadyTakenException("Error: already taken");
-        }
-        dataAccess.joinGame(playerColor, auth.username(), gameID);
     }
 
     public static String generateAuthToken() {
