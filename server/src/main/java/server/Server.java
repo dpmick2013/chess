@@ -1,10 +1,13 @@
 package server;
 
 import com.google.gson.Gson;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
 import dataaccess.DataAccess;
 import dataaccess.MemoryDataAccess;
 import datamodel.AuthData;
 import datamodel.GameData;
+import datamodel.JoinRequest;
 import datamodel.UserData;
 import exception.ServerException;
 import exception.UnauthorizedException;
@@ -26,105 +29,81 @@ public class Server {
         userService = new UserService(dataAccess);
         server = Javalin.create(config -> config.staticFiles.add("web"));
 
-        server.delete("db", ctx -> ctx.result("{}"));
+        server.delete("db", this::clear);
         server.post("user", this::register);
         server.post("session", this::login);
         server.delete("session", this::logout);
         server.get("game", this::listGames);
         server.post("game", this::createGame);
-
-//        server.exception(ServerException.class, this::exceptionHandler);
+        server.put("game", this::joinGame);
+        server.exception(ServerException.class, this::exceptionHandler);
 
         // Register your endpoints and exception handlers here.
 
     }
 
-//    private void exceptionHandler(ServerException ex, Context ctx) {
-//        ctx.status();
-//        ctx.result(ex.toJson());
-//    }
+    private void exceptionHandler(ServerException ex, Context ctx) {
+        ctx.status(ex.getCode());
+        ctx.result(ex.toJson());
+    }
+
+    private void clear(Context ctx) {
+        userService.clear();
+        ctx.status(200);
+        ctx.result("{}");
+    }
 
     private void register(Context ctx) throws Exception {
         var serializer = new Gson();
         var req = serializer.fromJson(ctx.body(), UserData.class);
-        if (req.username() == null|| req.email() == null || req.password() == null) {
-            ctx.status(400);
-            ctx.result(serializer.toJson(Map.of("message", "Error: bad request")));
-            return;
-        }
-        AuthData res;
-        try {
-            res = userService.register(req);
-            var regResult = serializer.toJson(res);
-            ctx.result(regResult);
-        } catch (AlreadyTakenException ex) {
-            ctx.status(403);
-            ctx.result(ex.toJson());
-        }
+        var res = userService.register(req);
+        var regResult = serializer.toJson(res);
+        ctx.status(200);
+        ctx.result(regResult);
+
     }
 
-    private void login(Context ctx) {
+    private void login(Context ctx) throws Exception {
         var serializer = new Gson();
         var req = serializer.fromJson(ctx.body(), UserData.class);
-        if (req.username() == null|| req.password() == null) {
-            ctx.status(400);
-            ctx.result(serializer.toJson(Map.of("message", "Error: bad request")));
-            return;
-        }
-        AuthData res;
-        try {
-            res = userService.login(req);
-            var loginResult = serializer.toJson(res);
-            ctx.result(loginResult);
-        } catch (UnauthorizedException ex) {
-            ctx.status(401);
-            ctx.result(ex.toJson());
-        }
+        AuthData res = userService.login(req);
+        var loginResult = serializer.toJson(res);
+        ctx.status(200);
+        ctx.result(loginResult);
     }
 
-    private void logout(Context ctx) {
+    private void logout(Context ctx) throws Exception {
         var serializer = new Gson();
-        var req = serializer.fromJson(ctx.header("Authorization"), String.class);
-        try {
-            userService.logout(req);
-            ctx.status(200);
-            ctx.result("{}");
-        } catch (UnauthorizedException ex) {
-            ctx.status(401);
-            ctx.result(ex.toJson());
-        }
+        var req = ctx.header("Authorization");
+        userService.logout(req);
+        ctx.status(200);
+        ctx.result("{}");
     }
 
-    private void listGames(Context ctx) {
+    private void listGames(Context ctx) throws Exception {
         var serializer = new Gson();
-        var req = serializer.fromJson(ctx.header("Authorization"), String.class);
-        try {
-            var res = userService.listGames(req);
-            ctx.status(200);
-            ctx.result(serializer.toJson(Map.of("games", res)));
-        } catch(UnauthorizedException ex) {
-            ctx.status(401);
-            ctx.result(ex.toJson());
-        }
+        var req = ctx.header("Authorization");
+        var res = userService.listGames(req);
+        ctx.status(200);
+        ctx.result(serializer.toJson(Map.of("games", res)));
     }
 
-    private void createGame(Context ctx) {
+    private void createGame(Context ctx) throws Exception {
         var serializer = new Gson();
-        var auth = serializer.fromJson(ctx.header("Authorization"), String.class);
+        var auth = ctx.header("Authorization");
         var name = serializer.fromJson(ctx.body(), GameData.class);
-        if (name.gameName() == null) {
-            ctx.status(400);
-            ctx.result(serializer.toJson(Map.of("message", "Error: bad request")));
-            return;
-        }
-        try {
-            var gameID = userService.createGame(auth, name.gameName());
-            ctx.status(200);
-            ctx.result(serializer.toJson(Map.of("gameID", gameID)));
-        } catch(UnauthorizedException ex) {
-            ctx.status(401);
-            ctx.result(ex.toJson());
-        }
+        var gameID = userService.createGame(auth, name.gameName());
+        ctx.status(200);
+        ctx.result(serializer.toJson(Map.of("gameID", gameID)));
+    }
+
+    private void joinGame(Context ctx) throws Exception {
+        var serializer = new Gson();
+        var auth = ctx.header("Authorization");
+        var req = serializer.fromJson(ctx.body(), JoinRequest.class);
+        userService.joinGame(auth, req.playerColor(), req.gameID());
+        ctx.status(200);
+        ctx.result("{}");
     }
 
     public int run(int desiredPort) {

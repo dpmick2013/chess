@@ -1,5 +1,6 @@
 package service;
 
+import chess.ChessGame;
 import dataaccess.MemoryDataAccess;
 import datamodel.AuthData;
 import datamodel.GameData;
@@ -88,7 +89,7 @@ class UserServiceTest {
         var service = new UserService(da);
         var res = service.register(existingUser);
         var authToken = res.authToken();
-        da.createGame(new GameData(1, null, null, "test"));
+        da.createGame("test");
         ArrayList<GameData> gameList = service.listGames(authToken);
         assertNotNull(gameList);
         assertEquals(da.getGameList(), gameList);
@@ -101,7 +102,29 @@ class UserServiceTest {
         var service = new UserService(da);
         var res = service.register(existingUser);
         var authToken = res.authToken();
-        var createResult = service.createGame(authToken, "test");
-        assertNotNull(createResult);
+        assertDoesNotThrow(() -> service.createGame(authToken, "test1"));
+        var gameID = service.createGame(authToken, "test2");
+        var game = da.getGame(gameID);
+        assertNull(game.whiteUsername());
+        assertNull(game.blackUsername());
+        assertEquals("test2", game.gameName());
+    }
+
+    @Test
+    void joinGame() throws Exception {
+        var existingUser = new UserData("existing", "password", "email@email");
+        var da = new MemoryDataAccess();
+        var service = new UserService(da);
+        var res = service.register(existingUser);
+        var authToken = res.authToken();
+        var gameID = service.createGame(authToken, "test");
+        var game = da.getGame(gameID);
+        service.joinGame(authToken, "WHITE", gameID);
+        var updatedGame = da.getGame(gameID);
+        assertNotEquals(updatedGame.whiteUsername(), game.whiteUsername());
+        assertEquals(updatedGame.gameID(), game.gameID());
+        assertEquals(updatedGame.blackUsername(), game.blackUsername());
+        assertEquals(updatedGame.gameName(), game.gameName());
+        assertEquals(updatedGame.whiteUsername(), existingUser.username());
     }
 }
