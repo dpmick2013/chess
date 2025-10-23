@@ -49,7 +49,9 @@ public class ChessGame {
      */
     public Collection<ChessMove> validMoves(ChessPosition startPosition) {
         ChessPiece piece = gameBoard.getPiece(startPosition);
-        if (piece == null) return null;
+        if (piece == null) {
+            return null;
+        }
         Collection<ChessMove> moves = piece.pieceMoves(gameBoard, startPosition),
                 valid = piece.pieceMoves(gameBoard, startPosition);
         for (ChessMove move : moves) {
@@ -69,17 +71,24 @@ public class ChessGame {
      * @throws InvalidMoveException if move is invalid
      */
     public void makeMove(ChessMove move) throws InvalidMoveException {
-        if (gameBoard.getPiece(move.getStartPosition()) == null)
+        if (gameBoard.getPiece(move.getStartPosition()) == null) {
             throw new InvalidMoveException("No piece");
-        if (getTeamTurn() != gameBoard.getPiece(move.getStartPosition()).getTeamColor())
+        }
+        if (getTeamTurn() != gameBoard.getPiece(move.getStartPosition()).getTeamColor()) {
             throw new InvalidMoveException("Not your turn");
+        }
         Collection<ChessMove> valid;
         valid = validMoves(move.getStartPosition());
-        if (!valid.contains(move))
+        if (!valid.contains(move)) {
             throw new InvalidMoveException("Invalid Move");
+        }
         movePiece(move, gameBoard);
-        if (getTeamTurn() == TeamColor.WHITE) setTeamTurn(TeamColor.BLACK);
-        else setTeamTurn(TeamColor.WHITE);
+        if (getTeamTurn() == TeamColor.WHITE) {
+            setTeamTurn(TeamColor.BLACK);
+        }
+        else {
+            setTeamTurn(TeamColor.WHITE);
+        }
     }
 
     /**
@@ -100,22 +109,7 @@ public class ChessGame {
      * @return True if the specified team is in checkmate
      */
     public boolean isInCheckmate(TeamColor teamColor) {
-        boolean noMoves = false;
-        ChessPosition kingPos = findKing(gameBoard, teamColor);
-        ChessPosition movePos;
-        assert kingPos != null;
-        ChessPiece king = gameBoard.getPiece(kingPos);
-        Collection<ChessMove> moves = king.pieceMoves(gameBoard, kingPos);
-        for (ChessMove move : moves) {
-            movePos = move.getEndPosition();
-            if (checkIfAttacked(gameBoard, movePos, teamColor)) {
-                noMoves = true;
-                continue;
-            }
-            noMoves = false;
-            break;
-        }
-        if (noMoves && checkIfStuck(gameBoard, teamColor)) {
+        if (checkKingMoves(teamColor) && checkIfStuck(gameBoard, teamColor)) {
             return isInCheck(teamColor);
         }
         return false;
@@ -129,6 +123,13 @@ public class ChessGame {
      * @return True if the specified team is in stalemate, otherwise false
      */
     public boolean isInStalemate(TeamColor teamColor) {
+        if (checkKingMoves(teamColor) && checkIfStuck(gameBoard, teamColor)) {
+            return !isInCheck(teamColor);
+        }
+        return false;
+    }
+
+    private boolean checkKingMoves(TeamColor teamColor) {
         boolean noMoves = false;
         ChessPosition kingPos = findKing(gameBoard, teamColor);
         ChessPosition movePos;
@@ -144,10 +145,7 @@ public class ChessGame {
             noMoves = false;
             break;
         }
-        if (noMoves && checkIfStuck(gameBoard, teamColor)) {
-            return !isInCheck(teamColor);
-        }
-        return false;
+        return noMoves;
     }
 
     /**
@@ -183,7 +181,9 @@ public class ChessGame {
             for (int j = 1; j < 9; j++) {
                 testPos = new ChessPosition(i, j);
                 testPiece = board.getPiece(testPos);
-                if (testPiece == null) continue;
+                if (testPiece == null) {
+                    continue;
+                }
                 if (testPiece.getPieceType() == ChessPiece.PieceType.KING) {
                     if (testPiece.getTeamColor() == team) {
                         return testPos;
@@ -203,22 +203,15 @@ public class ChessGame {
             for (int j = 1; j < 9; j++) {
                 testPos = new ChessPosition(i, j);
                 testPiece = board.getPiece(testPos);
-                if (testPiece == null) continue;
-                if (testPiece.getTeamColor() != teamColor) {
-                    testList = testPiece.coveredSquares(board, testPos);
-                    if (testPiece.getPieceType() == ChessPiece.PieceType.PAWN) {
-                        if (testPiece.getTeamColor() == TeamColor.WHITE) {
-                            testList.add(new ChessMove(testPos, new ChessPosition(i + 1, j + 1), null));
-                            testList.add(new ChessMove(testPos, new ChessPosition(i + 1, j - 1), null));
-                        }
-                        else {
-                            testList.add(new ChessMove(testPos, new ChessPosition(i - 1, j + 1), null));
-                            testList.add(new ChessMove(testPos, new ChessPosition(i - 1, j - 1), null));
-                        }
-                    }
-                    for (ChessMove move : testList) {
-                        movePos = move.getEndPosition();
-                        if (movePos.getRow() == pos.getRow() && movePos.getColumn() == pos.getColumn()) return true;
+                if (testPiece == null || testPiece.getTeamColor() == teamColor) {
+                    continue;
+                }
+                testList = testPiece.coveredSquares(board, testPos);
+                checkIfPawnCovers(testList, testPos, testPiece);
+                for (ChessMove move : testList) {
+                    movePos = move.getEndPosition();
+                    if (movePos.getRow() == pos.getRow() && movePos.getColumn() == pos.getColumn()) {
+                        return true;
                     }
                 }
             }
@@ -226,16 +219,35 @@ public class ChessGame {
         return false;
     }
 
+    private void checkIfPawnCovers(Collection<ChessMove> list, ChessPosition pos, ChessPiece piece) {
+        if (piece.getPieceType() == ChessPiece.PieceType.PAWN) {
+            var row = pos.getRow();
+            var col = pos.getColumn();
+            if (piece.getTeamColor() == TeamColor.WHITE) {
+                list.add(new ChessMove(pos, new ChessPosition(row + 1, col + 1), null));
+                list.add(new ChessMove(pos, new ChessPosition(row + 1, col - 1), null));
+            }
+            else {
+                list.add(new ChessMove(pos, new ChessPosition(row - 1, col + 1), null));
+                list.add(new ChessMove(pos, new ChessPosition(row - 1, col - 1), null));
+            }
+        }
+    }
+
     private void movePiece(ChessMove move, ChessBoard board) {
         ChessPosition start = move.getStartPosition();
         ChessPosition end = move.getEndPosition();
         ChessPiece promotion;
         if (move.getPromotionPiece() == null) {
-            if (board.getPiece(end) != null) board.removePiece(end);
+            if (board.getPiece(end) != null) {
+                board.removePiece(end);
+            }
             board.addPiece(end, board.getPiece(start));
         }
         else {
-            if (board.getPiece(end) != null) board.removePiece(end);
+            if (board.getPiece(end) != null) {
+                board.removePiece(end);
+            }
             promotion = new ChessPiece(board.getPiece(start).getTeamColor(), move.getPromotionPiece());
             board.addPiece(end, promotion);
         }
@@ -259,10 +271,14 @@ public class ChessGame {
             for (int j = 1; j < 9; j++) {
                 testPos = new ChessPosition(i, j);
                 testPiece = board.getPiece(testPos);
-                if (testPiece == null) continue;
+                if (testPiece == null) {
+                    continue;
+                }
                 if (testPiece.getTeamColor() == color) {
                     testList = validMoves(testPos);
-                    if (!testList.isEmpty()) return false;
+                    if (!testList.isEmpty()) {
+                        return false;
+                    }
                 }
             }
         }

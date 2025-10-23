@@ -107,33 +107,33 @@ public class ChessBoard {
 
     @Override
     public String toString() {
-        var board_string = "";
-        var piece_string = "";
+        var boardString = "";
+        var pieceString = "";
         ChessPiece piece;
         for (int i = 8; i > 0; i--) {
             for (int j = 1; j < 9; j++) {
                 piece = getPiece(new ChessPosition(i, j));
                 if (j == 8) {
                     if (piece == null) {
-                        board_string = board_string + "| |\n";
+                        boardString = boardString + "| |\n";
                     }
                     else {
-                        piece_string = piece.toString();
-                        board_string = board_string + "|" + piece_string + "|\n";
+                        pieceString = piece.toString();
+                        boardString = boardString + "|" + pieceString + "|\n";
                     }
                 }
                 else {
                     if (piece == null) {
-                        board_string = board_string + "| ";
+                        boardString = boardString + "| ";
                     }
                     else {
-                        piece_string = piece.toString();
-                        board_string = board_string + "|" + piece_string;
+                        pieceString = piece.toString();
+                        boardString = boardString + "|" + pieceString;
                     }
                 }
             }
         }
-        return board_string;
+        return boardString;
     }
 
     @Override
