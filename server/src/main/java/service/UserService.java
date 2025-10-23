@@ -1,15 +1,12 @@
 package service;
 
-import chess.ChessGame;
 import dataaccess.DataAccess;
 import datamodel.AuthData;
-import datamodel.GameData;
 import datamodel.UserData;
 import exception.AlreadyTakenException;
 import exception.BadRequestException;
 import exception.UnauthorizedException;
 
-import java.util.ArrayList;
 import java.util.Objects;
 import java.util.UUID;
 

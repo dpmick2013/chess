@@ -2,13 +2,11 @@ package service;
 
 import dataaccess.MemoryDataAccess;
 import datamodel.AuthData;
-import datamodel.GameData;
 import datamodel.UserData;
 import exception.AlreadyTakenException;
 import exception.UnauthorizedException;
 import org.junit.jupiter.api.*;
 
-import java.util.ArrayList;
 
 import static org.junit.jupiter.api.Assertions.*;
 

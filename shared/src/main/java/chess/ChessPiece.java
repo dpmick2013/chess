@@ -485,10 +485,14 @@ public class ChessPiece {
         for (int i = 1; i < 8; i++) {
             if (row + i > 8) break;
             var end = new ChessPosition(row + i, col);
-            if (occupied(board, end) && !enemy) break;
+            if (occupied(board, end) && !enemy) {
+                if (test) moveList.add(new ChessMove(pos, end, null));
+                break;
+            }
             moveList.add(new ChessMove(pos, end, null));
             if (occupied(board, end)) break;
         }
+        // Right
         for (int i = 1; i < 8; i++) {
             if (col + i > 8) break;
             var end = new ChessPosition(row, col + i);
@@ -496,17 +500,25 @@ public class ChessPiece {
             moveList.add(new ChessMove(pos, end, null));
             if (occupied(board, end)) break;
         }
+        // Down
         for (int i = 1; i < 8; i++) {
             if (row - i < 1) break;
             var end = new ChessPosition(row - i, col);
-            if (occupied(board, end) && !enemy) break;
+            if (occupied(board, end) && !enemy) {
+                if (test) moveList.add(new ChessMove(pos, end, null));
+                break;
+            }
             moveList.add(new ChessMove(pos, end, null));
             if (occupied(board, end)) break;
         }
+        // Left
         for (int i = 1; i < 8; i++) {
             if (col - i < 1) break;
             var end = new ChessPosition(row, col - i);
-            if (occupied(board, end) && !enemy) break;
+            if (occupied(board, end) && !enemy) {
+                if (test) moveList.add(new ChessMove(pos, end, null));
+                break;
+            }
             moveList.add(new ChessMove(pos, end, null));
             if (occupied(board, end)) break;
         }
@@ -515,48 +527,48 @@ public class ChessPiece {
     private void pawnMoves(ChessBoard board, ChessPosition pos, Collection<ChessMove> moveList, boolean test) {
         int row = pos.getRow();
         int col = pos.getColumn();
-        ChessPosition one_space;
-        ChessPosition diag1;
-        ChessPosition diag2;
+        ChessPosition oneSpace;
+        ChessPosition diagonal1;
+        ChessPosition diagonal2;
         if (pieceColor == ChessGame.TeamColor.WHITE) {
             var promotion = row + 1 == 8;
             if (row + 1 <= 8) {
-                one_space = new ChessPosition(row + 1, col);
-                if (row == 2 && !occupied(board, one_space)) {
-                    var two_spaces = new ChessPosition(row + 2, col);
-                    if (!occupied(board, two_spaces)) {
-                        moveList.add(new ChessMove(pos, two_spaces, null));
+                oneSpace = new ChessPosition(row + 1, col);
+                if (row == 2 && !occupied(board, oneSpace)) {
+                    var twoSpaces = new ChessPosition(row + 2, col);
+                    if (!occupied(board, twoSpaces)) {
+                        moveList.add(new ChessMove(pos, twoSpaces, null));
                     }
-                    moveList.add(new ChessMove(pos, one_space, null));
+                    moveList.add(new ChessMove(pos, oneSpace, null));
                 }
                 else if (row != 2){
-                    if (!occupied(board, one_space)) {
+                    if (!occupied(board, oneSpace)) {
                         if (promotion) {
-                            pawnPromotion(pos, one_space, moveList);
+                            pawnPromotion(pos, oneSpace, moveList);
                         }
-                        else moveList.add(new ChessMove(pos, one_space, null));
+                        else moveList.add(new ChessMove(pos, oneSpace, null));
                     }
                 }
                 if (col + 1 <= 8) {
-                    diag1 = new ChessPosition(row + 1, col + 1);
-                    if (occupied(board, diag1) && enemy) {
+                    diagonal1 = new ChessPosition(row + 1, col + 1);
+                    if (occupied(board, diagonal1) && enemy) {
                         if (promotion) {
-                            pawnPromotion(pos, diag1, moveList);
-                        } else moveList.add(new ChessMove(pos, diag1, null));
+                            pawnPromotion(pos, diagonal1, moveList);
+                        } else moveList.add(new ChessMove(pos, diagonal1, null));
                     }
-                    else if (occupied(board, diag1) && test) {
-                        moveList.add(new ChessMove(pos, diag1, null));
+                    else if (occupied(board, diagonal1) && test) {
+                        moveList.add(new ChessMove(pos, diagonal1, null));
                     }
                 }
                 if (col - 1 >= 1) {
-                    diag2 = new ChessPosition(row + 1, col - 1);
-                    if (occupied(board, diag2) && enemy) {
+                    diagonal2 = new ChessPosition(row + 1, col - 1);
+                    if (occupied(board, diagonal2) && enemy) {
                         if (promotion) {
-                            pawnPromotion(pos, diag2, moveList);
-                        } else moveList.add(new ChessMove(pos, diag2, null));
+                            pawnPromotion(pos, diagonal2, moveList);
+                        } else moveList.add(new ChessMove(pos, diagonal2, null));
                     }
-                    else if (occupied(board, diag2) && test) {
-                        moveList.add(new ChessMove(pos, diag2, null));
+                    else if (occupied(board, diagonal2) && test) {
+                        moveList.add(new ChessMove(pos, diagonal2, null));
                     }
                 }
             }
@@ -564,41 +576,41 @@ public class ChessPiece {
         else {
             var promotion = row - 1 == 1;
             if (row - 1 >= 1) {
-                one_space = new ChessPosition(row - 1, col);
-                if (row == 7 && !occupied(board, one_space)) {
-                    var two_spaces = new ChessPosition(row - 2, col);
-                    if (!occupied(board, two_spaces)) {
-                        moveList.add(new ChessMove(pos, two_spaces, null));
+                oneSpace = new ChessPosition(row - 1, col);
+                if (row == 7 && !occupied(board, oneSpace)) {
+                    var twoSpaces = new ChessPosition(row - 2, col);
+                    if (!occupied(board, twoSpaces)) {
+                        moveList.add(new ChessMove(pos, twoSpaces, null));
                     }
-                    moveList.add(new ChessMove(pos, one_space, null));
+                    moveList.add(new ChessMove(pos, oneSpace, null));
                 }
                 else if (row != 7) {
-                    if (!occupied(board, one_space)) {
+                    if (!occupied(board, oneSpace)) {
                         if (promotion) {
-                            pawnPromotion(pos, one_space, moveList);
-                        } else moveList.add(new ChessMove(pos, one_space, null));
+                            pawnPromotion(pos, oneSpace, moveList);
+                        } else moveList.add(new ChessMove(pos, oneSpace, null));
                     }
                 }
                 if (col + 1 <= 8) {
-                    diag1 = new ChessPosition(row - 1, col + 1);
-                    if (occupied(board, diag1) && enemy) {
+                    diagonal1 = new ChessPosition(row - 1, col + 1);
+                    if (occupied(board, diagonal1) && enemy) {
                         if (promotion) {
-                            pawnPromotion(pos, diag1, moveList);
-                        } else moveList.add(new ChessMove(pos, diag1, null));
+                            pawnPromotion(pos, diagonal1, moveList);
+                        } else moveList.add(new ChessMove(pos, diagonal1, null));
                     }
-                    else if (occupied(board, diag1) && test) {
-                        moveList.add(new ChessMove(pos, diag1, null));
+                    else if (occupied(board, diagonal1) && test) {
+                        moveList.add(new ChessMove(pos, diagonal1, null));
                     }
                 }
                 if (col - 1 >= 1) {
-                    diag2 = new ChessPosition(row - 1, col - 1);
-                    if (occupied(board, diag2) && enemy) {
+                    diagonal2 = new ChessPosition(row - 1, col - 1);
+                    if (occupied(board, diagonal2) && enemy) {
                         if (promotion) {
-                            pawnPromotion(pos, diag2, moveList);
-                        } else moveList.add(new ChessMove(pos, diag2, null));
+                            pawnPromotion(pos, diagonal2, moveList);
+                        } else moveList.add(new ChessMove(pos, diagonal2, null));
                     }
-                    else if (occupied(board, diag2) && test) {
-                        moveList.add(new ChessMove(pos, diag2, null));
+                    else if (occupied(board, diagonal2) && test) {
+                        moveList.add(new ChessMove(pos, diagonal2, null));
                     }
                 }
             }
