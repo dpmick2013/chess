@@ -18,7 +18,9 @@ public class DataAccessTest {
     }
 
     @Test
-    void createUser() {
-
+    void createUser() throws Exception{
+        var user = new UserData("test", "test", "test");
+        DataAccess da = new MySqlDataAccess();
+        da.createUser(user);
     }
 }

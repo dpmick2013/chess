@@ -2,7 +2,9 @@ package server;
 
 import com.google.gson.Gson;
 import dataaccess.DataAccess;
+import dataaccess.DataAccessException;
 import dataaccess.MemoryDataAccess;
+import dataaccess.MySqlDataAccess;
 import datamodel.AuthData;
 import datamodel.GameData;
 import datamodel.JoinRequest;
@@ -24,7 +26,8 @@ public class Server {
     private final AdminService adminService;
 
     public Server() {
-        DataAccess dataAccess = new MemoryDataAccess();
+//        DataAccess dataAccess = new MemoryDataAccess();
+        DataAccess dataAccess = new MySqlDataAccess();
         userService = new UserService(dataAccess);
         gameService = new GameService(dataAccess);
         adminService = new AdminService(dataAccess);
