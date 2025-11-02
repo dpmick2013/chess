@@ -7,25 +7,43 @@ import static org.junit.jupiter.api.Assertions.*;
 
 public class DataAccessTest {
 
+    private static DataAccess da;
+    private static UserData existingUser;
+    private static AuthData existingAuth;
+
+    @BeforeAll
+    static void init() {
+        da = new MySqlDataAccess();
+        existingUser = new UserData("test", "test", "test");
+        existingAuth = new AuthData("test", "test");
+    }
+
+    @BeforeEach
+    void setup() throws Exception {
+        da.clear();
+    }
+
     @Test
     void clear() throws Exception {
-        var user = new UserData("joe", "j@j", "j");
-        DataAccess da = new MySqlDataAccess();
-        da.createUser(user);
+        da.createUser(existingUser);
         da.clear();
     }
 
     @Test
     void createUser() throws Exception {
-        var user = new UserData("test", "test", "test");
-        DataAccess da = new MySqlDataAccess();
-        assertDoesNotThrow(() -> da.createUser(user));
+        assertDoesNotThrow(() -> da.createUser(existingUser));
     }
 
     @Test
     void createAuth() throws Exception {
-        var auth = new AuthData("test", "test");
-        DataAccess da = new MySqlDataAccess();
-        assertDoesNotThrow(() -> da.createAuth(auth));
+        assertDoesNotThrow(() -> da.createAuth(existingAuth));
+    }
+
+    @Test
+    void getUser() throws Exception {
+        da.createUser(existingUser);
+        var result = da.getUser(existingUser.username());
+        assertNotNull(result);
+        assertEquals(existingUser, result);
     }
 }

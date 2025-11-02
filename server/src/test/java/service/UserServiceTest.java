@@ -13,14 +13,12 @@ import static org.junit.jupiter.api.Assertions.*;
 
 class UserServiceTest {
 
-    @BeforeEach
-
-
     @Test
     void register() throws Exception {
         var user = new UserData("joe", "j@j", "j");
         var da = new MemoryDataAccess();
         var service = new UserService(da);
+        da.clear();
         AuthData res = service.register(user);
         assertNotNull(res);
         assertEquals(res.username(), user.username());
@@ -32,6 +30,7 @@ class UserServiceTest {
         var existingUser = new UserData("existing", "password", "email@email");
         var testUser = new UserData("existing", "test", "test@email");
         var da = new MySqlDataAccess();
+        da.clear();
         var service = new UserService(da);
         service.register(existingUser);
         assertThrows(AlreadyTakenException.class, () -> service.register(testUser));
