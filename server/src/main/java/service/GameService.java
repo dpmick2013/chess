@@ -17,14 +17,14 @@ public class GameService {
         this.dataAccess = dataAccess;
     }
 
-    public ArrayList<GameData> listGames(String authToken) throws UnauthorizedException {
+    public ArrayList<GameData> listGames(String authToken) throws Exception {
         if (dataAccess.getAuth(authToken) == null) {
             throw new UnauthorizedException("Error: unauthorized");
         }
         return dataAccess.getGameList();
     }
 
-    public int createGame(String authToken, String name) throws UnauthorizedException, BadRequestException {
+    public int createGame(String authToken, String name) throws Exception {
         if (name == null) {
             throw new BadRequestException("Error: bad request");
         }

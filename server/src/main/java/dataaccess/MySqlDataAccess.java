@@ -111,7 +111,22 @@ public class MySqlDataAccess implements DataAccess{
     }
 
     @Override
-    public AuthData getAuth(String authToken) {
+    public AuthData getAuth(String authToken) throws DataAccessException {
+        try (Connection conn = DatabaseManager.getConnection()) {
+            var statement = "SELECT * FROM auths WHERE authToken=?";
+            try (PreparedStatement ps = conn.prepareStatement(statement)) {
+                ps.setString(1, authToken);
+                try (ResultSet rs = ps.executeQuery()) {
+                    if (rs.next()) {
+                        String token = rs.getNString(1);
+                        String uname = rs.getNString(2);
+                        return new AuthData(token, uname);
+                    }
+                }
+            }
+        } catch (Exception e) {
+            throw new DataAccessException("Error");
+        }
         return null;
     }
 

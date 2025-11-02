@@ -55,7 +55,7 @@ public class UserService {
         return authData;
     }
 
-    public void logout(String authToken) throws UnauthorizedException {
+    public void logout(String authToken) throws Exception {
         var authData = dataAccess.getAuth(authToken);
         if (authData == null) {
             throw new UnauthorizedException("Error: unauthorized");

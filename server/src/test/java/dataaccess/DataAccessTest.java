@@ -46,4 +46,12 @@ public class DataAccessTest {
         assertNotNull(result);
         assertEquals(existingUser, result);
     }
+
+    @Test
+    void getAuth() throws Exception {
+        da.createAuth(existingAuth);
+        var result = da.getAuth(existingAuth.authToken());
+        assertNotNull(result);
+        assertEquals(existingAuth, result);
+    }
 }
