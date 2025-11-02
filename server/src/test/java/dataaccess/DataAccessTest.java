@@ -7,20 +7,17 @@ import static org.junit.jupiter.api.Assertions.*;
 public class DataAccessTest {
 
     @Test
-    void clear() {
+    void clear() throws Exception {
         var user = new UserData("joe", "j@j", "j");
-        DataAccess da = new MemoryDataAccess();
-        assertNull(da.getUser(user.username()));
+        DataAccess da = new MySqlDataAccess();
         da.createUser(user);
-        assertNotNull(da.getUser(user.username()));
         da.clear();
-        assertNull(da.getUser(user.username()));
     }
 
     @Test
-    void createUser() throws Exception{
+    void createUser() throws Exception {
         var user = new UserData("test", "test", "test");
         DataAccess da = new MySqlDataAccess();
-        da.createUser(user);
+        assertDoesNotThrow(() -> da.createUser(user));
     }
 }

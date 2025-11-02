@@ -8,10 +8,10 @@ import datamodel.UserData;
 import java.util.ArrayList;
 
 public interface DataAccess {
-    void clear();
-    void createUser(UserData user);
+    void clear() throws DataAccessException;
+    void createUser(UserData user) throws DataAccessException;
     UserData getUser(String username);
-    void createAuth(AuthData auth);
+    void createAuth(AuthData auth) throws DataAccessException;
     AuthData getAuth(String authToken);
     void deleteAuth(String authToken);
     int createGame(String name);

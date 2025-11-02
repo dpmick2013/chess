@@ -51,7 +51,7 @@ public class Server {
         ctx.result(ex.toJson());
     }
 
-    private void clear(Context ctx) {
+    private void clear(Context ctx) throws DataAccessException {
         adminService.clear();
         ctx.status(200);
         ctx.result("{}");

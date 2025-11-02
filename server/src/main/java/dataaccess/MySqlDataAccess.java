@@ -27,30 +27,30 @@ public class MySqlDataAccess implements DataAccess{
 
     private final String[] createStatements = {
             """
-            CREATE TABLE IF NOT EXISTS  user (
+            CREATE TABLE IF NOT EXISTS  users (
               `username` varchar(256) NOT NULL,
               `password` varchar(256) NOT NULL,
               `email` varchar(256) NOT NULL,
               PRIMARY KEY (`username`)
             )
+            """,
             """
-//            """
-//            CREATE TABLE IF NOT EXISTS  auth (
-//              `authToken` varchar(256) NOT NULL,
-//              `username` varchar(256) NOT NULL,
-//              PRIMARY KEY (`authToken`)
-//            )
-//            """,
-//            """
-//            CREATE TABLE IF NOT EXISTS  user (
-//              `gameID` int NOT NULL AUTO_INCREMENT,
-//              `whiteUsername` varchar(256),
-//              `blackUsername` varchar(256),
-//              `gameName' varchar(256) NOT NULL,
-//              'game' longtext,
-//              PRIMARY KEY (`gameID`)
-//            )
-//            """
+            CREATE TABLE IF NOT EXISTS  auths (
+              `authToken` varchar(256) NOT NULL,
+              `username` varchar(256) NOT NULL,
+              PRIMARY KEY (`authToken`)
+            )
+            """,
+            """
+            CREATE TABLE IF NOT EXISTS  games (
+              `gameID` int NOT NULL AUTO_INCREMENT,
+              `whiteUsername` varchar(256),
+              `blackUsername` varchar(256),
+              `gameName` varchar(256) NOT NULL,
+              `game` longtext NOT NULL,
+              PRIMARY KEY (`gameID`)
+            )
+            """
     };
 
 
@@ -68,18 +68,19 @@ public class MySqlDataAccess implements DataAccess{
     }
 
     @Override
-    public void clear() {
-
+    public void clear() throws DataAccessException {
+        var statement1 = "DELETE FROM users";
+        var statement2 = "DELETE FROM auths";
+        var statement3 = "DELETE FROM games";
+        executeUpdate(statement1);
+        executeUpdate(statement2);
+        executeUpdate(statement3);
     }
 
     @Override
-    public void createUser(UserData user) {
-        var statement = "INSERT INTO user (username, password, email) VALUES (?, ?, ?)";
-        try {
-            executeUpdate(statement, user.username(), user.password(), user.email());
-        } catch(DataAccessException ex) {
-            System.out.println(ex.getMessage());
-        }
+    public void createUser(UserData user) throws DataAccessException {
+        var statement = "INSERT INTO users (username, password, email) VALUES (?, ?, ?)";
+        executeUpdate(statement, user.username(), user.password(), user.email());
     }
 
     @Override
@@ -88,8 +89,9 @@ public class MySqlDataAccess implements DataAccess{
     }
 
     @Override
-    public void createAuth(AuthData auth) {
-
+    public void createAuth(AuthData auth) throws DataAccessException {
+        var statement = "INSERT INTO auths (authToken, username) VALUES (?, ?)";
+        executeUpdate(statement, auth.authToken(), auth.username());
     }
 
     @Override
