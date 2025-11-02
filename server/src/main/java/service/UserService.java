@@ -1,11 +1,13 @@
 package service;
 
 import dataaccess.DataAccess;
+import dataaccess.DataAccessException;
 import datamodel.AuthData;
 import datamodel.UserData;
 import exception.AlreadyTakenException;
 import exception.BadRequestException;
 import exception.UnauthorizedException;
+import org.mindrot.jbcrypt.BCrypt;
 
 import java.util.Objects;
 import java.util.UUID;
@@ -20,11 +22,17 @@ public class UserService {
         if (user.username() == null || user.password() == null || user.email() == null) {
             throw new BadRequestException("Error: bad request");
         }
-        var userCheck = user.username();
-        if (dataAccess.getUser(userCheck) != null) {
+//        var userCheck = user.username();
+//        if (dataAccess.getUser(userCheck) != null) {
+//            throw new AlreadyTakenException("Error: username already taken");
+//        }
+        String hashedPassword = BCrypt.hashpw(user.password(), BCrypt.gensalt());
+        var storedUser = new UserData(user.username(), hashedPassword, user.email());
+        try {
+            dataAccess.createUser(storedUser);
+        } catch (DataAccessException ex) {
             throw new AlreadyTakenException("Error: username already taken");
         }
-        dataAccess.createUser(user);
         var authData = new AuthData(user.username(), generateAuthToken());
         dataAccess.createAuth(authData);
         return authData;
@@ -39,10 +47,9 @@ public class UserService {
         if (storedUser == null) {
             throw new UnauthorizedException("Error: user does not exist");
         }
-        if (!Objects.equals(storedUser.password(), user.password())) {
+        if (!BCrypt.checkpw(user.password(), storedUser.password())) {
             throw new UnauthorizedException("Error: incorrect password");
         }
-        dataAccess.createUser(user);
         var authData = new AuthData(user.username(), generateAuthToken());
         dataAccess.createAuth(authData);
         return authData;
@@ -59,4 +66,10 @@ public class UserService {
     public static String generateAuthToken() {
         return UUID.randomUUID().toString();
     }
+//    boolean verifyUser(String username, String providedClearTextPassword) {
+//        // read the previously hashed password from the database
+//        var hashedPassword = readHashedPasswordFromDatabase(username);
+//
+//        return BCrypt.checkpw(providedClearTextPassword, hashedPassword);
+//    }
 }

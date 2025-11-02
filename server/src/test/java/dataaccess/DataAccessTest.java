@@ -1,5 +1,6 @@
 package dataaccess;
 
+import datamodel.AuthData;
 import datamodel.UserData;
 import org.junit.jupiter.api.*;
 import static org.junit.jupiter.api.Assertions.*;
@@ -19,5 +20,12 @@ public class DataAccessTest {
         var user = new UserData("test", "test", "test");
         DataAccess da = new MySqlDataAccess();
         assertDoesNotThrow(() -> da.createUser(user));
+    }
+
+    @Test
+    void createAuth() throws Exception {
+        var auth = new AuthData("test", "test");
+        DataAccess da = new MySqlDataAccess();
+        assertDoesNotThrow(() -> da.createAuth(auth));
     }
 }

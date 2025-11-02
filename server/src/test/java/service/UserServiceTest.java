@@ -1,6 +1,7 @@
 package service;
 
 import dataaccess.MemoryDataAccess;
+import dataaccess.MySqlDataAccess;
 import datamodel.AuthData;
 import datamodel.UserData;
 import exception.AlreadyTakenException;
@@ -30,7 +31,7 @@ class UserServiceTest {
     void registerUserExists() throws Exception {
         var existingUser = new UserData("existing", "password", "email@email");
         var testUser = new UserData("existing", "test", "test@email");
-        var da = new MemoryDataAccess();
+        var da = new MySqlDataAccess();
         var service = new UserService(da);
         service.register(existingUser);
         assertThrows(AlreadyTakenException.class, () -> service.register(testUser));
