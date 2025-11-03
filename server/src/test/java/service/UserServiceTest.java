@@ -1,5 +1,7 @@
 package service;
 
+import dataaccess.DataAccess;
+import dataaccess.DataAccessException;
 import dataaccess.MemoryDataAccess;
 import dataaccess.MySqlDataAccess;
 import datamodel.AuthData;
@@ -13,36 +15,43 @@ import static org.junit.jupiter.api.Assertions.*;
 
 class UserServiceTest {
 
+    private static DataAccess da;
+    private static UserData existingUser;
+    private static UserService service;
+
+    @BeforeAll
+    static void init() {
+        da = new MySqlDataAccess();
+        service = new UserService(da);
+        existingUser = new UserData("test", "test", "test");
+    }
+
+    @BeforeEach
+    void setup() throws Exception {
+        da.clear();
+    }
+
     @Test
     void register() throws Exception {
         var user = new UserData("joe", "j@j", "j");
-        var da = new MemoryDataAccess();
-        var service = new UserService(da);
         da.clear();
-        AuthData res = service.register(user);
+        AuthData res = service.register(existingUser);
         assertNotNull(res);
-        assertEquals(res.username(), user.username());
+        assertEquals(res.username(), existingUser.username());
         assertNotNull(res.authToken());
     }
 
     @Test
     void registerUserExists() throws Exception {
-        var existingUser = new UserData("existing", "password", "email@email");
-        var testUser = new UserData("existing", "test", "test@email");
-        var da = new MySqlDataAccess();
-        da.clear();
-        var service = new UserService(da);
+        var testUser = new UserData("test", "password", "test@email");
         service.register(existingUser);
         assertThrows(AlreadyTakenException.class, () -> service.register(testUser));
     }
 
     @Test
     void login() throws Exception {
-        var user = new UserData("joe", "j", "j@j");
-        var loginUser = new UserData("joe", "j", null);
-        var da = new MemoryDataAccess();
-        var service = new UserService(da);
-        AuthData reg = service.register(user);
+        var loginUser = new UserData("test", "test", null);
+        AuthData reg = service.register(existingUser);
         AuthData log = service.login(loginUser);
         assertNotNull(log);
         assertEquals(reg.username(), log.username());
@@ -50,19 +59,13 @@ class UserServiceTest {
 
     @Test
     void loginIncorrectPassword() throws Exception {
-        var user = new UserData("joe", "j@j", "j");
-        var loginUser = new UserData("joe", "incorrect", null);
-        var da = new MemoryDataAccess();
-        var service = new UserService(da);
-        service.register(user);
+        var loginUser = new UserData("test", "incorrect", null);
+        service.register(existingUser);
         assertThrows(UnauthorizedException.class, () -> service.login(loginUser));
     }
 
     @Test
     void logout() throws Exception {
-        var existingUser = new UserData("existing", "password", "email@email");
-        var da = new MemoryDataAccess();
-        var service = new UserService(da);
         var res = service.register(existingUser);
         var authToken = res.authToken();
         assertDoesNotThrow(() -> service.logout(authToken));
@@ -70,9 +73,6 @@ class UserServiceTest {
 
     @Test
     void logoutAgain() throws Exception {
-        var existingUser = new UserData("existing", "password", "email@email");
-        var da = new MemoryDataAccess();
-        var service = new UserService(da);
         var res = service.register(existingUser);
         var authToken = res.authToken();
         assertDoesNotThrow(() -> service.logout(authToken));

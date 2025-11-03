@@ -8,8 +8,6 @@ import exception.AlreadyTakenException;
 import exception.BadRequestException;
 import exception.UnauthorizedException;
 import org.mindrot.jbcrypt.BCrypt;
-
-import java.util.Objects;
 import java.util.UUID;
 
 public class UserService {
@@ -22,10 +20,6 @@ public class UserService {
         if (user.username() == null || user.password() == null || user.email() == null) {
             throw new BadRequestException("Error: bad request");
         }
-//        var userCheck = user.username();
-//        if (dataAccess.getUser(userCheck) != null) {
-//            throw new AlreadyTakenException("Error: username already taken");
-//        }
         String hashedPassword = BCrypt.hashpw(user.password(), BCrypt.gensalt());
         var storedUser = new UserData(user.username(), hashedPassword, user.email());
         try {
@@ -66,10 +60,4 @@ public class UserService {
     public static String generateAuthToken() {
         return UUID.randomUUID().toString();
     }
-//    boolean verifyUser(String username, String providedClearTextPassword) {
-//        // read the previously hashed password from the database
-//        var hashedPassword = readHashedPasswordFromDatabase(username);
-//
-//        return BCrypt.checkpw(providedClearTextPassword, hashedPassword);
-//    }
 }
