@@ -1,6 +1,7 @@
 package dataaccess;
 
 import chess.ChessGame;
+import com.google.gson.Gson;
 import datamodel.AuthData;
 import datamodel.GameData;
 import datamodel.UserData;
@@ -69,9 +70,9 @@ public class MySqlDataAccess implements DataAccess{
 
     @Override
     public void clear() throws DataAccessException {
-        var statement1 = "DELETE FROM users";
-        var statement2 = "DELETE FROM auths";
-        var statement3 = "DELETE FROM games";
+        var statement1 = "TRUNCATE TABLE users";
+        var statement2 = "TRUNCATE TABLE auths";
+        var statement3 = "TRUNCATE TABLE games";
         executeUpdate(statement1);
         executeUpdate(statement2);
         executeUpdate(statement3);
@@ -137,8 +138,11 @@ public class MySqlDataAccess implements DataAccess{
     }
 
     @Override
-    public int createGame(String name) {
-        return 0;
+    public int createGame(String name) throws DataAccessException {
+        var statement = "INSERT INTO games (gameName, game) VALUES (?, ?)";
+        var game = new ChessGame();
+        var gameJson = new Gson().toJson(game);
+        return executeUpdate(statement, name, gameJson);
     }
 
     @Override

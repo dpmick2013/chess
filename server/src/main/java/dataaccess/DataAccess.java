@@ -14,7 +14,7 @@ public interface DataAccess {
     void createAuth(AuthData auth) throws DataAccessException;
     AuthData getAuth(String authToken) throws DataAccessException;
     void deleteAuth(String authToken) throws DataAccessException;
-    int createGame(String name);
+    int createGame(String name) throws DataAccessException;
     GameData getGame(Integer gameID);
     ArrayList<GameData> getGameList();
     String getPlayer(ChessGame.TeamColor color, GameData game);

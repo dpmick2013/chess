@@ -54,4 +54,18 @@ public class DataAccessTest {
         assertNotNull(result);
         assertEquals(existingAuth, result);
     }
+
+    @Test
+    void deleteAuth() throws Exception {
+        da.createAuth(existingAuth);
+        assertNotNull(da.getAuth(existingAuth.authToken()));
+        da.deleteAuth(existingAuth.authToken());
+        assertNull(da.getAuth(existingAuth.authToken()));
+    }
+
+    @Test
+    void createGame() throws DataAccessException {
+        int id = da.createGame("test");
+        assertEquals(1, id);
+    }
 }
