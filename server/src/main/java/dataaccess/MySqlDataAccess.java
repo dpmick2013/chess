@@ -2,9 +2,7 @@ package dataaccess;
 
 import chess.ChessGame;
 import com.google.gson.Gson;
-import datamodel.AuthData;
-import datamodel.GameData;
-import datamodel.UserData;
+import datamodel.*;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -92,9 +90,9 @@ public class MySqlDataAccess implements DataAccess{
                 ps.setString(1, username);
                 try (ResultSet rs = ps.executeQuery()) {
                     if (rs.next()) {
-                        String uname = rs.getNString(1);
-                        String password = rs.getNString(2);
-                        String email = rs.getNString(3);
+                        String uname = rs.getString(1);
+                        String password = rs.getString(2);
+                        String email = rs.getString(3);
                         return new UserData(uname, password, email);
                     }
                 }
@@ -119,8 +117,8 @@ public class MySqlDataAccess implements DataAccess{
                 ps.setString(1, authToken);
                 try (ResultSet rs = ps.executeQuery()) {
                     if (rs.next()) {
-                        String token = rs.getNString(1);
-                        String uname = rs.getNString(2);
+                        String token = rs.getString(1);
+                        String uname = rs.getString(2);
                         return new AuthData(token, uname);
                     }
                 }
@@ -151,8 +149,25 @@ public class MySqlDataAccess implements DataAccess{
     }
 
     @Override
-    public ArrayList<GameData> getGameList() {
-        return null;
+    public GameList getGameList() throws DataAccessException {
+        ArrayList<GameResult> list = new ArrayList<>();
+        try (Connection conn = DatabaseManager.getConnection()) {
+            var statement = "SELECT gameID, whiteUsername, blackUsername, gameName FROM games";
+            try (PreparedStatement ps = conn.prepareStatement(statement)) {
+                try (ResultSet rs = ps.executeQuery()) {
+                    while (rs.next()) {
+                        var id = rs.getInt(1);
+                        var wUser = rs.getString(2);
+                        var bUser = rs.getString(3);
+                        var name = rs.getString(4);
+                        list.add(new GameResult(id, wUser, bUser, name));
+                    }
+                }
+            }
+        } catch (Exception e) {
+            throw new DataAccessException("Error");
+        }
+        return new GameList(list);
     }
 
     @Override

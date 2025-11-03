@@ -1,10 +1,7 @@
 package dataaccess;
 
 import chess.ChessGame;
-import datamodel.AuthData;
-import datamodel.GameData;
-import datamodel.GameList;
-import datamodel.UserData;
+import datamodel.*;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -58,8 +55,12 @@ public class MemoryDataAccess implements DataAccess {
     }
 
     @Override
-    public ArrayList<GameData> getGameList() {
-        return new GameList(games.values());
+    public GameList getGameList() {
+        ArrayList<GameResult> list = new ArrayList<>();
+        for (GameData game : games.values()) {
+            list.add(new GameResult(game.gameID(), game.whiteUsername(), game.blackUsername(), game.gameName()));
+        }
+        return new GameList(list);
     }
 
     @Override

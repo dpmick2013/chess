@@ -5,8 +5,8 @@ import com.google.gson.Gson;
 import java.util.ArrayList;
 import java.util.Collection;
 
-public class GameList extends ArrayList<GameData> {
-    public GameList(Collection<GameData> games) {
+public class GameList extends ArrayList<GameResult> {
+    public GameList(Collection<GameResult> games) {
         super(games);
     }
 

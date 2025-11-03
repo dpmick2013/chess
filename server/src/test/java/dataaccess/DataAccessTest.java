@@ -64,8 +64,16 @@ public class DataAccessTest {
     }
 
     @Test
-    void createGame() throws DataAccessException {
+    void createGame() throws Exception {
         int id = da.createGame("test");
         assertEquals(1, id);
+    }
+
+    @Test
+    void getGameList() throws Exception {
+        da.createGame("test1");
+        da.createGame("test2");
+        var list = da.getGameList();
+        assertNotNull(list);
     }
 }

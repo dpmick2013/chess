@@ -1,8 +1,6 @@
 package service;
 
 import dataaccess.DataAccess;
-import dataaccess.DataAccessException;
-import dataaccess.MemoryDataAccess;
 import dataaccess.MySqlDataAccess;
 import datamodel.AuthData;
 import datamodel.UserData;
@@ -33,8 +31,6 @@ class UserServiceTest {
 
     @Test
     void register() throws Exception {
-        var user = new UserData("joe", "j@j", "j");
-        da.clear();
         AuthData res = service.register(existingUser);
         assertNotNull(res);
         assertEquals(res.username(), existingUser.username());

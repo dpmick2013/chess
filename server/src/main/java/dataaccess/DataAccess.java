@@ -3,6 +3,7 @@ package dataaccess;
 import chess.ChessGame;
 import datamodel.AuthData;
 import datamodel.GameData;
+import datamodel.GameList;
 import datamodel.UserData;
 
 import java.util.ArrayList;
@@ -16,7 +17,7 @@ public interface DataAccess {
     void deleteAuth(String authToken) throws DataAccessException;
     int createGame(String name) throws DataAccessException;
     GameData getGame(Integer gameID);
-    ArrayList<GameData> getGameList();
+    GameList getGameList() throws DataAccessException;
     String getPlayer(ChessGame.TeamColor color, GameData game);
     void joinGame(ChessGame.TeamColor color, String username, Integer gameID);
 }
