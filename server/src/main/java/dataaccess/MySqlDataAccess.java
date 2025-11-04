@@ -94,7 +94,7 @@ public class MySqlDataAccess implements DataAccess{
                     }
                 }
             }
-        } catch (Exception e) {
+        } catch (SQLException e) {
             throw new DataAccessException("Error");
         }
         return null;
@@ -120,7 +120,7 @@ public class MySqlDataAccess implements DataAccess{
                     }
                 }
             }
-        } catch (Exception e) {
+        } catch (SQLException e) {
             throw new DataAccessException("Error");
         }
         return null;
@@ -158,7 +158,7 @@ public class MySqlDataAccess implements DataAccess{
                     }
                 }
             }
-        } catch (Exception e) {
+        } catch (SQLException e) {
             throw new DataAccessException("Error");
         }
         return null;

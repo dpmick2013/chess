@@ -6,8 +6,11 @@ import datamodel.AuthData;
 import datamodel.UserData;
 import exception.AlreadyTakenException;
 import exception.BadRequestException;
+import exception.ServerException;
 import exception.UnauthorizedException;
 import org.mindrot.jbcrypt.BCrypt;
+
+import java.sql.SQLException;
 import java.util.UUID;
 
 public class UserService {
@@ -25,6 +28,7 @@ public class UserService {
         try {
             dataAccess.createUser(storedUser);
         } catch (DataAccessException ex) {
+            sqlExceptionHandler(ex);
             throw new AlreadyTakenException("Error: username already taken");
         }
         var authData = new AuthData(user.username(), generateAuthToken());
@@ -37,7 +41,12 @@ public class UserService {
         if (user.username() == null|| user.password() == null) {
             throw new BadRequestException("Error: bad request");
         }
-        var storedUser = dataAccess.getUser(userCheck);
+        UserData storedUser = null;
+        try {
+            storedUser = dataAccess.getUser(userCheck);
+        } catch (DataAccessException ex) {
+            sqlExceptionHandler(ex);
+        }
         if (storedUser == null) {
             throw new UnauthorizedException("Error: user does not exist");
         }
@@ -45,19 +54,38 @@ public class UserService {
             throw new UnauthorizedException("Error: incorrect password");
         }
         var authData = new AuthData(user.username(), generateAuthToken());
-        dataAccess.createAuth(authData);
+        try {
+            dataAccess.createAuth(authData);
+        } catch (DataAccessException ex) {
+            sqlExceptionHandler(ex);
+        }
         return authData;
     }
 
     public void logout(String authToken) throws Exception {
-        var authData = dataAccess.getAuth(authToken);
+        AuthData authData = null;
+        try {
+            authData = dataAccess.getAuth(authToken);
+        } catch (DataAccessException ex) {
+            sqlExceptionHandler(ex);
+        }
         if (authData == null) {
             throw new UnauthorizedException("Error: unauthorized");
         }
-        dataAccess.deleteAuth(authToken);
+        try{
+            dataAccess.deleteAuth(authToken);
+        } catch (DataAccessException ex) {
+            sqlExceptionHandler(ex);
+        }
     }
 
     public static String generateAuthToken() {
         return UUID.randomUUID().toString();
+    }
+
+    private void sqlExceptionHandler(Exception ex) throws ServerException {
+        if (ex.getCause() instanceof SQLException) {
+            throw new ServerException("Error: Database connection failed", 500);
+        }
     }
 }

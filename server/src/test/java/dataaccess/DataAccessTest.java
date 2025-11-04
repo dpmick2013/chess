@@ -14,7 +14,7 @@ public class DataAccessTest {
     private static AuthData existingAuth;
 
     @BeforeAll
-    static void init() {
+    static void init() throws Exception {
         da = new MySqlDataAccess();
         existingUser = new UserData("test", "test", "test@test");
         existingAuth = new AuthData("test", "test");
@@ -39,8 +39,22 @@ public class DataAccessTest {
     }
 
     @Test
+    void createUserAgain() throws Exception {
+        var testUser = new UserData("test", "duplicate", "test@dupe");
+        da.createUser(existingUser);
+        assertThrows(DataAccessException.class, () -> da.createUser(testUser));
+    }
+
+    @Test
     void createAuth() throws Exception {
         assertDoesNotThrow(() -> da.createAuth(existingAuth));
+    }
+
+    @Test
+    void createAuthAgain() throws Exception {
+        var testAuth = new AuthData("duplicate", "test");
+        da.createAuth(existingAuth);
+        assertThrows(DataAccessException.class, () -> da.createAuth(testAuth));
     }
 
     @Test
@@ -52,11 +66,29 @@ public class DataAccessTest {
     }
 
     @Test
+    void getUserNonexistent() throws Exception {
+        da.createUser(existingUser);
+        var result = da.getUser(existingUser.username());
+        assertNotNull(result);
+        var badResult = da.getUser("bad_name");
+        assertNull(badResult);
+    }
+
+    @Test
     void getAuth() throws Exception {
         da.createAuth(existingAuth);
         var result = da.getAuth(existingAuth.authToken());
         assertNotNull(result);
         assertEquals(existingAuth, result);
+    }
+
+    @Test
+    void getAuthNonexistent() throws Exception {
+        da.createAuth(existingAuth);
+        var result = da.getAuth(existingAuth.authToken());
+        assertNotNull(result);
+        var badResult = da.getAuth("bad_auth");
+        assertNull(badResult);
     }
 
     @Test
@@ -68,9 +100,23 @@ public class DataAccessTest {
     }
 
     @Test
+    void deleteWrongAuth() throws Exception {
+        da.createAuth(existingAuth);
+        da.deleteAuth("bad");
+        var result = da.getAuth(existingAuth.authToken());
+        assertNotNull(result);
+    }
+
+
+    @Test
     void createGame() throws Exception {
         int id = da.createGame("test");
         assertEquals(1, id);
+    }
+
+    @Test
+    void createGameNullName() {
+        assertThrows(DataAccessException.class, () -> da.createGame(null));
     }
 
     @Test
@@ -79,6 +125,12 @@ public class DataAccessTest {
         da.createGame("test2");
         var list = da.getGameList();
         assertNotNull(list);
+    }
+
+    @Test
+    void getEmptyList() throws DataAccessException {
+        var list = da.getGameList();
+        assertTrue(list.isEmpty());
     }
 
     @Test
@@ -91,11 +143,26 @@ public class DataAccessTest {
     }
 
     @Test
+    void getGameBadID() throws Exception {
+        da.createGame("test1");
+        var game = da.getGame(100);
+        assertNull(game);
+    }
+
+    @Test
     void joinGame() throws Exception {
         var gameID = da.createGame("test1");
         da.joinGame(ChessGame.TeamColor.WHITE, "test", gameID);
         var game = da.getGame(gameID);
         assertNotNull(game.whiteUsername());
         assertEquals("test", game.whiteUsername());
+    }
+
+    @Test
+    void joinGameBadID() throws Exception {
+        var gameID = da.createGame("test1");
+        da.joinGame(ChessGame.TeamColor.WHITE, "test", 100);
+        var game = da.getGame(gameID);
+        assertNull(game.whiteUsername());
     }
 }

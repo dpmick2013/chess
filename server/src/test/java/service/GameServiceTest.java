@@ -23,7 +23,7 @@ class GameServiceTest {
     private static GameService gameService;
 
     @BeforeAll
-    static void init() {
+    static void init() throws Exception {
         da = new MySqlDataAccess();
         userService = new UserService(da);
         gameService = new GameService(da);
