@@ -14,7 +14,7 @@ public class DataAccessTest {
     private static AuthData existingAuth;
 
     @BeforeAll
-    static void init() throws Exception {
+    static void init() {
         da = new MySqlDataAccess();
         existingUser = new UserData("test", "test", "test@test");
         existingAuth = new AuthData("test", "test");
@@ -34,7 +34,7 @@ public class DataAccessTest {
     }
 
     @Test
-    void createUser() throws Exception {
+    void createUser() {
         assertDoesNotThrow(() -> da.createUser(existingUser));
     }
 
@@ -46,7 +46,7 @@ public class DataAccessTest {
     }
 
     @Test
-    void createAuth() throws Exception {
+    void createAuth() {
         assertDoesNotThrow(() -> da.createAuth(existingAuth));
     }
 

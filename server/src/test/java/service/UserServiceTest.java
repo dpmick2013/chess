@@ -1,7 +1,6 @@
 package service;
 
 import dataaccess.DataAccess;
-import dataaccess.DataAccessException;
 import dataaccess.MySqlDataAccess;
 import datamodel.AuthData;
 import datamodel.UserData;
@@ -19,7 +18,7 @@ class UserServiceTest {
     private static UserService service;
 
     @BeforeAll
-    static void init() throws Exception {
+    static void init() {
         da = new MySqlDataAccess();
         service = new UserService(da);
         existingUser = new UserData("test", "test", "test");

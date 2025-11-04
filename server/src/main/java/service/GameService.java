@@ -26,7 +26,7 @@ public class GameService {
         checkAuth(authToken);
         ArrayList<GameResult> list = new ArrayList<>();
         try {
-            dataAccess.getGameList();
+            list = dataAccess.getGameList();
         } catch (DataAccessException ex) {
             sqlExceptionHandler(ex);
         }

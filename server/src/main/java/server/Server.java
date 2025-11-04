@@ -2,8 +2,6 @@ package server;
 
 import com.google.gson.Gson;
 import dataaccess.DataAccess;
-import dataaccess.DataAccessException;
-import dataaccess.MemoryDataAccess;
 import dataaccess.MySqlDataAccess;
 import datamodel.AuthData;
 import datamodel.GameData;
