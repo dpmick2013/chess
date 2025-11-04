@@ -1,6 +1,8 @@
 package dataaccess;
 
+import chess.ChessGame;
 import datamodel.AuthData;
+import datamodel.GameData;
 import datamodel.UserData;
 import org.junit.jupiter.api.*;
 import static org.junit.jupiter.api.Assertions.*;
@@ -14,7 +16,7 @@ public class DataAccessTest {
     @BeforeAll
     static void init() {
         da = new MySqlDataAccess();
-        existingUser = new UserData("test", "test", "test");
+        existingUser = new UserData("test", "test", "test@test");
         existingAuth = new AuthData("test", "test");
     }
 
@@ -27,6 +29,8 @@ public class DataAccessTest {
     void clear() throws Exception {
         da.createUser(existingUser);
         da.clear();
+        var user = da.getUser(existingUser.username());
+        assertNull(user);
     }
 
     @Test
@@ -75,5 +79,23 @@ public class DataAccessTest {
         da.createGame("test2");
         var list = da.getGameList();
         assertNotNull(list);
+    }
+
+    @Test
+    void getGame() throws Exception {
+        var gameID = da.createGame("test1");
+        var game = da.getGame(gameID);
+        assertNotNull(game);
+        assertInstanceOf(GameData.class, game);
+        assertEquals(game.gameID(), gameID);
+    }
+
+    @Test
+    void joinGame() throws Exception {
+        var gameID = da.createGame("test1");
+        da.joinGame(ChessGame.TeamColor.WHITE, "test", gameID);
+        var game = da.getGame(gameID);
+        assertNotNull(game.whiteUsername());
+        assertEquals("test", game.whiteUsername());
     }
 }

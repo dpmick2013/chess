@@ -22,8 +22,6 @@ public class MySqlDataAccess implements DataAccess{
         }
     }
 
-
-
     private final String[] createStatements = {
             """
             CREATE TABLE IF NOT EXISTS  users (
@@ -51,7 +49,6 @@ public class MySqlDataAccess implements DataAccess{
             )
             """
     };
-
 
     private void configureDatabase() throws DataAccessException {
         DatabaseManager.createDatabase();
@@ -119,7 +116,7 @@ public class MySqlDataAccess implements DataAccess{
                     if (rs.next()) {
                         String token = rs.getString(1);
                         String uname = rs.getString(2);
-                        return new AuthData(token, uname);
+                        return new AuthData(uname, token);
                     }
                 }
             }
@@ -144,7 +141,26 @@ public class MySqlDataAccess implements DataAccess{
     }
 
     @Override
-    public GameData getGame(Integer gameID) {
+    public GameData getGame(Integer gameID) throws DataAccessException {
+        try (Connection conn = DatabaseManager.getConnection()) {
+            var statement = "SELECT * FROM games WHERE gameID=?";
+            try (PreparedStatement ps = conn.prepareStatement(statement)) {
+                ps.setInt(1, gameID);
+                try (ResultSet rs = ps.executeQuery()) {
+                    if (rs.next()) {
+                        var id = rs.getInt(1);
+                        var wUser = rs.getString(2);
+                        var bUser = rs.getString(3);
+                        var name = rs.getString(4);
+                        var gameString = rs.getString(5);
+                        var game = new Gson().fromJson(gameString, ChessGame.class);
+                        return new GameData(id, wUser, bUser, name, game);
+                    }
+                }
+            }
+        } catch (Exception e) {
+            throw new DataAccessException("Error");
+        }
         return null;
     }
 
@@ -171,13 +187,39 @@ public class MySqlDataAccess implements DataAccess{
     }
 
     @Override
-    public String getPlayer(ChessGame.TeamColor color, GameData game) {
+    public String getPlayer(ChessGame.TeamColor color, GameData game) throws DataAccessException {
+        try (Connection conn = DatabaseManager.getConnection()) {
+            String statement;
+            if (color == ChessGame.TeamColor.WHITE) {
+                statement = "SELECT whiteUsername FROM games WHERE gameID=?";
+            }
+            else {
+                statement = "SELECT blackUsername FROM games WHERE gameID=?";
+            }
+            try (PreparedStatement ps = conn.prepareStatement(statement)) {
+                ps.setInt(1, game.gameID());
+                try (ResultSet rs = ps.executeQuery()) {
+                    if (rs.next()) {
+                        return rs.getString(1);
+                    }
+                }
+            }
+        } catch (Exception e) {
+            throw new DataAccessException("Error");
+        }
         return null;
     }
 
     @Override
-    public void joinGame(ChessGame.TeamColor color, String username, Integer gameID) {
-
+    public void joinGame(ChessGame.TeamColor color, String username, Integer gameID) throws DataAccessException {
+        String statement;
+        if (color == ChessGame.TeamColor.WHITE) {
+            statement = "UPDATE games SET whiteUsername=? WHERE gameID=?";
+        }
+        else {
+            statement = "UPDATE games SET blackUsername=? WHERE gameID=?";
+        }
+        executeUpdate(statement, username, gameID);
     }
 
     private int executeUpdate(String statement, Object... params) throws DataAccessException {
@@ -185,7 +227,12 @@ public class MySqlDataAccess implements DataAccess{
             try (PreparedStatement ps = conn.prepareStatement(statement, RETURN_GENERATED_KEYS)) {
                 for (int i = 0; i < params.length; i++) {
                     Object param = params[i];
-                    if (param instanceof String p) ps.setString(i + 1, p);
+                    if (param instanceof String p) {
+                        ps.setString(i + 1, p);
+                    }
+                    else if (param instanceof Integer p) {
+                        ps.setInt(i + 1, p);
+                    }
                 }
                 ps.executeUpdate();
 

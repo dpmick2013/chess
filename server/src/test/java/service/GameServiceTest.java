@@ -1,11 +1,14 @@
 package service;
 
-import dataaccess.MemoryDataAccess;
-import datamodel.GameData;
+import dataaccess.DataAccess;
+import dataaccess.MySqlDataAccess;
+import datamodel.GameResult;
 import datamodel.UserData;
 import exception.AlreadyTakenException;
 import exception.BadRequestException;
 import exception.UnauthorizedException;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
@@ -13,26 +16,35 @@ import java.util.ArrayList;
 import static org.junit.jupiter.api.Assertions.*;
 
 class GameServiceTest {
+
+    private static DataAccess da;
+    private static UserData existingUser;
+    private static UserService userService;
+    private static GameService gameService;
+
+    @BeforeAll
+    static void init() {
+        da = new MySqlDataAccess();
+        userService = new UserService(da);
+        gameService = new GameService(da);
+        existingUser = new UserData("existing", "password", "existing@email");
+    }
+
+    @BeforeEach
+    void setup() throws Exception {
+        da.clear();
+    }
     @Test
     void listGames() throws Exception {
-        var existingUser = new UserData("existing", "password", "email@email");
-        var da = new MemoryDataAccess();
-        var userService = new UserService(da);
-        var gameService = new GameService(da);
         var res = userService.register(existingUser);
         var authToken = res.authToken();
         da.createGame("test");
-        ArrayList<GameData> gameList = gameService.listGames(authToken);
+        ArrayList<GameResult> gameList = gameService.listGames(authToken);
         assertNotNull(gameList);
-        assertEquals(da.getGameList(), gameList);
     }
 
     @Test
     void listGamesUnauthorized() throws Exception {
-        var existingUser = new UserData("existing", "password", "email@email");
-        var da = new MemoryDataAccess();
-        var userService = new UserService(da);
-        var gameService = new GameService(da);
         userService.register(existingUser);
         var authToken = "bad";
         assertThrows(UnauthorizedException.class, () -> gameService.listGames(authToken));
@@ -40,10 +52,6 @@ class GameServiceTest {
 
     @Test
     void createGame() throws Exception {
-        var existingUser = new UserData("existing", "password", "email@email");
-        var da = new MemoryDataAccess();
-        var userService = new UserService(da);
-        var gameService = new GameService(da);
         var res = userService.register(existingUser);
         var authToken = res.authToken();
         assertDoesNotThrow(() -> gameService.createGame(authToken, "test1"));
@@ -56,10 +64,6 @@ class GameServiceTest {
 
     @Test
     void createGameInvalid() throws Exception {
-        var existingUser = new UserData("existing", "password", "email@email");
-        var da = new MemoryDataAccess();
-        var userService = new UserService(da);
-        var gameService = new GameService(da);
         var res = userService.register(existingUser);
         var badAuthToken = "bad";
         var goodAuthToken = res.authToken();
@@ -69,10 +73,6 @@ class GameServiceTest {
 
     @Test
     void joinGame() throws Exception {
-        var existingUser = new UserData("existing", "password", "email@email");
-        var da = new MemoryDataAccess();
-        var userService = new UserService(da);
-        var gameService = new GameService(da);
         var res = userService.register(existingUser);
         var authToken = res.authToken();
         var gameID = gameService.createGame(authToken, "test");
@@ -88,11 +88,7 @@ class GameServiceTest {
 
     @Test
     void joinGameInvalid() throws Exception {
-        var existingUser = new UserData("existing", "password", "email@email");
         var testUser = new UserData("test", "test", "test@test");
-        var da = new MemoryDataAccess();
-        var userService = new UserService(da);
-        var gameService = new GameService(da);
         var res = userService.register(existingUser);
         var testReg = userService.register(testUser);
         var authToken = res.authToken();

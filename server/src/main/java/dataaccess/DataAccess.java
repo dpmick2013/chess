@@ -1,12 +1,7 @@
 package dataaccess;
 
 import chess.ChessGame;
-import datamodel.AuthData;
-import datamodel.GameData;
-import datamodel.GameList;
-import datamodel.UserData;
-
-import java.util.ArrayList;
+import datamodel.*;
 
 public interface DataAccess {
     void clear() throws DataAccessException;
@@ -16,8 +11,8 @@ public interface DataAccess {
     AuthData getAuth(String authToken) throws DataAccessException;
     void deleteAuth(String authToken) throws DataAccessException;
     int createGame(String name) throws DataAccessException;
-    GameData getGame(Integer gameID);
+    GameData getGame(Integer gameID) throws DataAccessException;
     GameList getGameList() throws DataAccessException;
-    String getPlayer(ChessGame.TeamColor color, GameData game);
-    void joinGame(ChessGame.TeamColor color, String username, Integer gameID);
+    String getPlayer(ChessGame.TeamColor color, GameData game) throws DataAccessException;
+    void joinGame(ChessGame.TeamColor color, String username, Integer gameID) throws DataAccessException;
 }

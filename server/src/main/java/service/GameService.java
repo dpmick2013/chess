@@ -2,7 +2,7 @@ package service;
 
 import chess.ChessGame;
 import dataaccess.DataAccess;
-import datamodel.GameData;
+import datamodel.GameResult;
 import exception.AlreadyTakenException;
 import exception.BadRequestException;
 import exception.UnauthorizedException;
@@ -17,7 +17,7 @@ public class GameService {
         this.dataAccess = dataAccess;
     }
 
-    public ArrayList<GameData> listGames(String authToken) throws Exception {
+    public ArrayList<GameResult> listGames(String authToken) throws Exception {
         if (dataAccess.getAuth(authToken) == null) {
             throw new UnauthorizedException("Error: unauthorized");
         }
