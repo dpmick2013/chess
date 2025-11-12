@@ -1,6 +1,7 @@
 package ui;
 
 import java.util.Arrays;
+import java.util.Objects;
 import java.util.Scanner;
 
 public class ChessClient {
@@ -13,7 +14,8 @@ public class ChessClient {
 
     public enum State {
         LOGGEDOUT,
-        LOGGEDIN
+        LOGGEDIN,
+        INGAME
     }
 
     public void run() {
@@ -34,22 +36,32 @@ public class ChessClient {
     }
 
     public void printPrompt() {
-        if (state == State.LOGGEDOUT) {
-            System.out.print("[LOGGED_OUT]" + " >>> ");
-        }
-        else {
-            System.out.print("[LOGGED_IN]" + " >>> ");
+//        if (state == State.LOGGEDOUT) {
+//            System.out.print("[LOGGED_OUT]" + " >>> ");
+//        }
+//        else {
+//            System.out.print("[LOGGED_IN]" + " >>> ");
+//        }
+        switch (state) {
+            case LOGGEDOUT -> System.out.print("[LOGGED_OUT]" + " >>> ");
+            case LOGGEDIN -> System.out.print("[LOGGED_IN]" + " >>> ");
+            case INGAME -> System.out.print("[IN_GAME]" + " >>> ");
         }
     }
 
     public String eval(String input) {
         try {
-            String[] tokens = input.toLowerCase().split(" ");
+            String[] tokens = input.split(" ");
             String cmd = (tokens.length > 0) ? tokens[0] : "help";
             String[] params = Arrays.copyOfRange(tokens, 1, tokens.length);
             return switch (cmd) {
                 case "register" -> register(params);
                 case "login" -> login(params);
+                case "create" -> create(params);
+                case "list" -> list();
+                case "join" -> join(params);
+                case "observe" -> observe(params);
+                case "logout" -> logout();
                 case "quit" -> "quit";
                 default -> help();
             };
@@ -59,6 +71,9 @@ public class ChessClient {
     }
 
     public String register(String... params) {
+        if (state != State.LOGGEDOUT) {
+            return "You are already registered\n";
+        }
         if (params.length >= 3) {
             state = State.LOGGEDIN;
             return String.format("registered as %s\n", params[0]);
@@ -69,29 +84,75 @@ public class ChessClient {
     }
 
     public String login(String... params) {
+        if (state != State.LOGGEDOUT) {
+            return "You are already logged in\n";
+        }
         state = State.LOGGEDIN;
         return String.format("logged in as %s\n", params[0]);
+    }
+
+    private String create(String... params) throws Exception {
+        assertLoggedIn();
+        return String.format("game created with name %s\n", params[0]);
+    }
+
+    private String list() throws Exception {
+        assertLoggedIn();
+        return "All of the games:\ngame1\ngame2\n";
+    }
+
+    private String join(String... params) throws Exception {
+        assertLoggedIn();
+        state = State.INGAME;
+        if (Objects.equals(params[1], "WHITE")) {
+            DrawBoard.printBoardWhite();
+        }
+        else if (Objects.equals(params[1], "BLACK")){
+            DrawBoard.printBoardBlack();
+        }
+        return String.format("Joined game %s\n", params[0]);
+    }
+
+    private String observe(String... params) throws Exception {
+        assertLoggedIn();
+        DrawBoard.printBoardWhite();
+        return String.format("Observing game %s\n", params[0]);
+    }
+
+    private String logout() throws Exception {
+        assertLoggedIn();
+        state = State.LOGGEDOUT;
+        return "Logged out\n";
     }
 
     public String help() {
         if (state == State.LOGGEDOUT) {
             return """
-                   register <USERNAME> <PASSWORD> <EMAIL>
-                   login <USERNAME> <PASSWORD>
-                   quit
-                   help
+                   \u001b[35mregister \u001B[36m<USERNAME> <PASSWORD> <EMAIL>\u001B[0m - to create an account
+                   \u001b[35mlogin \u001B[36m<USERNAME> <PASSWORD>\u001B[0m - to play chess
+                   \u001b[35mquit\u001B[0m - leaves program
+                   \u001b[35mhelp\u001B[0m - lists commands
                    """;
         }
         else {
             return """
-                   create <NAME>
-                   list
-                   join <ID> [WHITE|BLACK]
-                   observe <ID>
-                   logout
-                   quit
-                   help
+                   \u001b[35mcreate \u001B[36m<NAME>\u001B[0m - creates a game
+                   \u001b[35mlist\u001B[0m - lists all games
+                   \u001b[35mjoin \u001B[36m<ID> \u001B[0m[WHITE|\u001B[37mBLACK\u001B[0m] - joins a game as a color
+                   \u001b[35mobserve \u001B[36m<ID>\u001B[0m - join game as observer
+                   \u001b[35mlogout\u001B[0m - leave chess
+                   \u001b[35mquit\u001B[0m - leaves program
+                   \u001b[35mhelp\u001B[0m - lists commands
                    """;
+        }
+    }
+
+    private void assertLoggedIn() throws Exception {
+        if (state == State.LOGGEDOUT) {
+            throw new Exception("Must login to perform command\n");
+        }
+        else if (state == State.INGAME) {
+            throw new Exception("Unavailable while in a game\n");
         }
     }
 }
