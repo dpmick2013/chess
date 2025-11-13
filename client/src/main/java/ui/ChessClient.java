@@ -1,5 +1,8 @@
 package ui;
 
+import client.ServerFacade;
+import datamodel.UserData;
+
 import java.util.Arrays;
 import java.util.Objects;
 import java.util.Scanner;
@@ -7,9 +10,11 @@ import java.util.Scanner;
 public class ChessClient {
 
     private State state = State.LOGGEDOUT;
+    private final ServerFacade server;
+    private String authToken;
 
-    public ChessClient() {
-
+    public ChessClient(String serverURL) {
+        server = new ServerFacade(serverURL);
     }
 
     public enum State {
@@ -36,12 +41,6 @@ public class ChessClient {
     }
 
     public void printPrompt() {
-//        if (state == State.LOGGEDOUT) {
-//            System.out.print("[LOGGED_OUT]" + " >>> ");
-//        }
-//        else {
-//            System.out.print("[LOGGED_IN]" + " >>> ");
-//        }
         switch (state) {
             case LOGGEDOUT -> System.out.print("[LOGGED_OUT]" + " >>> ");
             case LOGGEDIN -> System.out.print("[LOGGED_IN]" + " >>> ");
@@ -70,13 +69,13 @@ public class ChessClient {
         }
     }
 
-    public String register(String... params) {
-        if (state != State.LOGGEDOUT) {
-            return "You are already registered\n";
-        }
+    public String register(String... params) throws Exception {
         if (params.length >= 3) {
             state = State.LOGGEDIN;
-            return String.format("registered as %s\n", params[0]);
+            var user = new UserData(params[0], params[1], params[2]);
+            var auth = server.register(user);
+            authToken = auth.authToken();
+            return String.format("You registered as %s\n", auth.username());
         }
         else {
             return "Missing inputs\n";
