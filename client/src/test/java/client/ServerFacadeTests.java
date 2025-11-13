@@ -1,6 +1,5 @@
 package client;
 
-import datamodel.AuthData;
 import datamodel.UserData;
 import exception.ServerException;
 import org.junit.jupiter.api.*;

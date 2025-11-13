@@ -72,27 +72,27 @@ public class ChessClient {
 
     public String register(String... params) throws Exception {
         if (state == State.LOGGEDIN) {
-            return "You are already logged in\n";
+            return "You are already logged in";
         }
         if (params.length >= 3) {
-            state = State.LOGGEDIN;
             var user = new UserData(params[0], params[1], params[2]);
             var auth = server.register(user);
             authToken = auth.authToken();
-            return String.format("You registered as %s\n", auth.username());
+            state = State.LOGGEDIN;
+            return String.format("You registered as %s", auth.username());
         }
         else {
-            return "Missing inputs\n";
+            return "Missing inputs";
         }
     }
 
     public String login(String... params) throws Exception {
         if (params.length >= 2) {
-            state = State.LOGGEDIN;
             var user = new UserData(params[0], params[1], null);
             var auth = server.login(user);
             authToken = auth.authToken();
-            return String.format("logged in as %s\n", auth.username());
+            state = State.LOGGEDIN;
+            return String.format("logged in as %s", auth.username());
         }
         else {
             return "Expecting <USERNAME> <PASSWORD>";
@@ -101,12 +101,12 @@ public class ChessClient {
 
     private String create(String... params) throws Exception {
         assertLoggedIn();
-        return String.format("game created with name %s\n", params[0]);
+        return String.format("game created with name %s", params[0]);
     }
 
     private String list() throws Exception {
         assertLoggedIn();
-        return "All of the games:\ngame1\ngame2\n";
+        return "All of the games:\ngame1\ngame2";
     }
 
     private String join(String... params) throws Exception {
@@ -118,19 +118,20 @@ public class ChessClient {
         else if (Objects.equals(params[1], "BLACK")){
             DrawBoard.printBoardBlack();
         }
-        return String.format("Joined game %s\n", params[0]);
+        return String.format("Joined game %s", params[0]);
     }
 
     private String observe(String... params) throws Exception {
         assertLoggedIn();
         DrawBoard.printBoardWhite();
-        return String.format("Observing game %s\n", params[0]);
+        return String.format("Observing game %s", params[0]);
     }
 
     private String logout() throws Exception {
         assertLoggedIn();
+        server.logout(authToken);
         state = State.LOGGEDOUT;
-        return "Logged out\n";
+        return "Logged out";
     }
 
     public String help() {
