@@ -82,12 +82,14 @@ public class ChessClient {
         }
     }
 
-    public String login(String... params) {
-        if (state != State.LOGGEDOUT) {
-            return "You are already logged in\n";
+    public String login(String... params) throws Exception {
+        if (params.length >= 2) {
+            state = State.LOGGEDIN;
+            return String.format("logged in as %s\n", params[0]);
         }
-        state = State.LOGGEDIN;
-        return String.format("logged in as %s\n", params[0]);
+        else {
+            return "Expecting <USERNAME> <PASSWORD>";
+        }
     }
 
     private String create(String... params) throws Exception {
