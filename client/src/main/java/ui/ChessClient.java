@@ -85,7 +85,10 @@ public class ChessClient {
     public String login(String... params) throws Exception {
         if (params.length >= 2) {
             state = State.LOGGEDIN;
-            return String.format("logged in as %s\n", params[0]);
+            var user = new UserData(params[0], params[1], null);
+            var auth = server.login(user);
+            authToken = auth.authToken();
+            return String.format("logged in as %s\n", auth.username());
         }
         else {
             return "Expecting <USERNAME> <PASSWORD>";
