@@ -37,14 +37,15 @@ public class ChessClient {
                 var msg = ex.toString();
                 System.out.print(msg);
             }
+
         }
     }
 
     public void printPrompt() {
         switch (state) {
-            case LOGGEDOUT -> System.out.print("[LOGGED_OUT]" + " >>> ");
-            case LOGGEDIN -> System.out.print("[LOGGED_IN]" + " >>> ");
-            case INGAME -> System.out.print("[IN_GAME]" + " >>> ");
+            case LOGGEDOUT -> System.out.print("\n[LOGGED_OUT]" + " >>> ");
+            case LOGGEDIN -> System.out.print("\n[LOGGED_IN]" + " >>> ");
+            case INGAME -> System.out.print("\n[IN_GAME]" + " >>> ");
         }
     }
 
@@ -70,6 +71,9 @@ public class ChessClient {
     }
 
     public String register(String... params) throws Exception {
+        if (state == State.LOGGEDIN) {
+            return "You are already logged in\n";
+        }
         if (params.length >= 3) {
             state = State.LOGGEDIN;
             var user = new UserData(params[0], params[1], params[2]);

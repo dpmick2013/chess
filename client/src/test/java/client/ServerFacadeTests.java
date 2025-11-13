@@ -1,5 +1,6 @@
 package client;
 
+import datamodel.AuthData;
 import datamodel.UserData;
 import exception.ServerException;
 import org.junit.jupiter.api.*;
@@ -48,7 +49,7 @@ public class ServerFacadeTests {
         facade.register(user);
         var testUser = new UserData("test", "duplicate", "email@gmail.com");
         ServerException ex = assertThrows(ServerException.class, () -> facade.register(testUser));
-        assertEquals(ex.getCode(), 403);
+        assertEquals(403, ex.getCode());
     }
 
     @Test
@@ -66,6 +67,22 @@ public class ServerFacadeTests {
         facade.register(user);
         var badUser = new UserData("test", "badPassword", null);
         ServerException ex = assertThrows(ServerException.class, () -> facade.login(badUser));
-        assertEquals(ex.getCode(), 401);
+        assertEquals(401, ex.getCode());
+    }
+
+    @Test
+    public void logoutSuccess() throws Exception {
+        var result = facade.register(user);
+        var token = result.authToken();
+        assertDoesNotThrow(() -> facade.logout(token));
+    }
+
+    @Test
+    public void logoutTwice() throws Exception {
+        var result = facade.register(user);
+        var token = result.authToken();
+        facade.logout(token);
+        ServerException ex = assertThrows(ServerException.class, () -> facade.logout(token));
+        assertEquals(401, ex.getCode());
     }
 }
