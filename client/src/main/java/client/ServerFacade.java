@@ -1,7 +1,5 @@
 package client;
-import datamodel.AuthData;
-import datamodel.GameData;
-import datamodel.UserData;
+import datamodel.*;
 import exception.ServerException;
 
 import com.google.gson.Gson;
@@ -11,6 +9,7 @@ import java.net.http.*;
 import java.net.http.HttpRequest.BodyPublisher;
 import java.net.http.HttpRequest.BodyPublishers;
 import java.net.http.HttpResponse.BodyHandlers;
+import java.util.ArrayList;
 import java.util.HashMap;
 
 public class ServerFacade {
@@ -52,6 +51,14 @@ public class ServerFacade {
         var result = handleResponse(response, CreateGameResponse.class);
         assert result != null;
         return result.gameID();
+    }
+
+    public ArrayList<GameResult> listGame(String token) throws Exception {
+        var request = buildRequest("GET", "/game", null, token);
+        var response = sendRequest(request);
+        ListGameResponse result = handleResponse(response, ListGameResponse.class);
+        assert result != null;
+        return result.games();
     }
 
     private HttpRequest buildRequest(String method, String path, Object body, String authToken) {

@@ -100,4 +100,21 @@ public class ServerFacadeTests {
         ServerException ex = assertThrows(ServerException.class, () -> facade.createGame("test", badAuth));
         assertEquals(401, ex.getCode());
     }
+
+    @Test
+    public void listGameSuccess() throws Exception {
+        var result = facade.register(user);
+        var token = result.authToken();
+        facade.createGame("test", token);
+        var games = facade.listGame(token);
+        assertEquals(1, games.size());
+    }
+
+    @Test
+    public void listGameUnauthorized() throws Exception {
+        facade.register(user);
+        var badAuth = "notAuthorized";
+        ServerException ex = assertThrows(ServerException.class, () -> facade.listGame(badAuth));
+        assertEquals(401, ex.getCode());
+    }
 }
