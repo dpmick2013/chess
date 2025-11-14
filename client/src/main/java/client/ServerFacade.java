@@ -1,5 +1,6 @@
 package client;
 import datamodel.AuthData;
+import datamodel.GameData;
 import datamodel.UserData;
 import exception.ServerException;
 
@@ -11,6 +12,7 @@ import java.net.http.HttpRequest.BodyPublisher;
 import java.net.http.HttpRequest.BodyPublishers;
 import java.net.http.HttpResponse.BodyHandlers;
 import java.util.HashMap;
+import java.util.Map;
 
 public class ServerFacade {
     private final HttpClient client = HttpClient.newHttpClient();
@@ -44,9 +46,12 @@ public class ServerFacade {
         handleResponse(response, null);
     }
 
-    public int create(String name) {
-        var request = buildRequest("POST", "/game", name, null);
-        return 0;
+    public int createGame(String name, String token) throws Exception {
+        var gameName = new GameData(null, null, null, name, null);
+        var request = buildRequest("POST", "/game", gameName, token);
+        var response = sendRequest(request);
+        var result = handleResponse(response, CreateGameResponse.class);
+        return result.gameID();
     }
 
     private HttpRequest buildRequest(String method, String path, Object body, String authToken) {
