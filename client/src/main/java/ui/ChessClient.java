@@ -101,7 +101,13 @@ public class ChessClient {
 
     private String create(String... params) throws Exception {
         assertLoggedIn();
-        return String.format("game created with name %s", params[0]);
+        if (params.length == 1) {
+            server.createGame(params[0], authToken);
+            return String.format("game created with name %s", params[0]);
+        }
+        else {
+            return "Expecting <NAME>";
+        }
     }
 
     private String list() throws Exception {
