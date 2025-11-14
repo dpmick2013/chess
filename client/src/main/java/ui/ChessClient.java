@@ -130,7 +130,6 @@ public class ChessClient {
 
     private String join(String... params) throws Exception {
         assertLoggedIn();
-        state = State.INGAME;
         if (params.length == 2) {
             int id = Integer.parseInt(params[0]);
             String color = params[1];
@@ -144,6 +143,7 @@ public class ChessClient {
             else {
                 DrawBoard.printBoardBlack();
             }
+            state = State.INGAME;
             return String.format("Joined game %s as %s player", params[0], params[1]);
         }
         else {
