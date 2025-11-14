@@ -117,4 +117,27 @@ public class ServerFacadeTests {
         ServerException ex = assertThrows(ServerException.class, () -> facade.listGames(badAuth));
         assertEquals(401, ex.getCode());
     }
+
+    @Test
+    public void joinGameSuccess() throws Exception {
+        var result = facade.register(user);
+        var token = result.authToken();
+        facade.createGame("test", token);
+        assertDoesNotThrow(() -> facade.joinGame("WHITE", 1, token));
+    }
+
+    @Test
+    public void joinGameExceptions() throws Exception {
+        var result = facade.register(user);
+        var otherPlayer = facade.register(new UserData("other", "p", "email"));
+        var firstToken = result.authToken();
+        var secondToken = otherPlayer.authToken();
+        var badAuth = "notAuthorized";
+        facade.createGame("test", firstToken);
+        facade.joinGame("WHITE", 1, firstToken);
+        ServerException ex = assertThrows(ServerException.class, () -> facade.joinGame("WHITE",1, secondToken));
+        assertEquals(403, ex.getCode());
+        ex = assertThrows(ServerException.class, () -> facade.joinGame("BLACK", 1, badAuth));
+        assertEquals(401, ex.getCode());
+    }
 }
