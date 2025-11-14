@@ -63,6 +63,7 @@ public class ChessClient {
                 case "join" -> join(params);
                 case "observe" -> observe(params);
                 case "logout" -> logout();
+                case "leave" -> leave();
                 case "quit" -> "quit";
                 default -> help();
             };
@@ -130,13 +131,24 @@ public class ChessClient {
     private String join(String... params) throws Exception {
         assertLoggedIn();
         state = State.INGAME;
-        if (Objects.equals(params[1], "WHITE")) {
-            DrawBoard.printBoardWhite();
+        if (params.length == 2) {
+            int id = Integer.parseInt(params[0]);
+            String color = params[1];
+            color = color.toUpperCase();
+            var list = server.listGames(authToken);
+            var game = list.get(id - 1);
+            server.joinGame(color, game.gameID(), authToken);
+            if (Objects.equals(color, "WHITE")) {
+                DrawBoard.printBoardWhite();
+            }
+            else {
+                DrawBoard.printBoardBlack();
+            }
+            return String.format("Joined game %s as %s player", params[0], params[1]);
         }
-        else if (Objects.equals(params[1], "BLACK")){
-            DrawBoard.printBoardBlack();
+        else {
+            return "Need <ID> [COLOR]";
         }
-        return String.format("Joined game %s", params[0]);
     }
 
     private String observe(String... params) throws Exception {
@@ -152,6 +164,11 @@ public class ChessClient {
         return "Logged out";
     }
 
+    private String leave() {
+        state = State.LOGGEDIN;
+        return "You left the game";
+    }
+
     public String help() {
         if (state == State.LOGGEDOUT) {
             return """
@@ -161,13 +178,20 @@ public class ChessClient {
                    \u001b[35mhelp\u001B[0m - lists commands
                    """;
         }
-        else {
+        else if (state == State.LOGGEDIN) {
             return """
                    \u001b[35mcreate \u001B[36m<NAME>\u001B[0m - creates a game
                    \u001b[35mlist\u001B[0m - lists all games
                    \u001b[35mjoin \u001B[36m<ID> \u001B[0m[WHITE|\u001B[37mBLACK\u001B[0m] - joins a game as a color
                    \u001b[35mobserve \u001B[36m<ID>\u001B[0m - join game as an observer
                    \u001b[35mlogout\u001B[0m - logout of server
+                   \u001b[35mquit\u001B[0m - leaves program
+                   \u001b[35mhelp\u001B[0m - lists commands
+                   """;
+        }
+        else {
+            return """
+                   \u001b[35mleave\u001b[0m - leave the current game
                    \u001b[35mquit\u001B[0m - leaves program
                    \u001b[35mhelp\u001B[0m - lists commands
                    """;
