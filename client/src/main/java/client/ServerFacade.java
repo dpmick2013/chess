@@ -53,7 +53,7 @@ public class ServerFacade {
         return result.gameID();
     }
 
-    public ArrayList<GameResult> listGame(String token) throws Exception {
+    public ArrayList<GameResult> listGames(String token) throws Exception {
         var request = buildRequest("GET", "/game", null, token);
         var response = sendRequest(request);
         ListGameResponse result = handleResponse(response, ListGameResponse.class);

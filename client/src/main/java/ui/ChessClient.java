@@ -1,6 +1,7 @@
 package ui;
 
 import client.ServerFacade;
+import datamodel.GameResult;
 import datamodel.UserData;
 
 import java.util.Arrays;
@@ -24,7 +25,7 @@ public class ChessClient {
     }
 
     public void run() {
-        System.out.println("Welcome to Chess. Type help to get started");
+        System.out.print("Welcome to Chess. Type help to get started");
         Scanner scanner = new Scanner(System.in);
         var result = "";
         while(!result.equals("quit")) {
@@ -102,8 +103,8 @@ public class ChessClient {
     private String create(String... params) throws Exception {
         assertLoggedIn();
         if (params.length == 1) {
-            server.createGame(params[0], authToken);
-            return String.format("game created with name %s", params[0]);
+            var id = server.createGame(params[0], authToken);
+            return String.format("Game created: \"%s\"; id: %d", params[0], id);
         }
         else {
             return "Expecting <NAME>";
@@ -112,7 +113,18 @@ public class ChessClient {
 
     private String list() throws Exception {
         assertLoggedIn();
-        return "All of the games:\ngame1\ngame2";
+        var result = new StringBuilder();
+        result.append("List of all of the games -\n\n");
+        var games = server.listGames(authToken);
+        int count = 0;
+        for (GameResult game : games) {
+            count++;
+            var name = game.gameName();
+            var white = game.whiteUsername();
+            var black = game.blackUsername();
+            result.append(String.format("Game %d: \"%s\" - [White: %s, Black: %s]\n", count, name, white, black));
+        }
+        return result.toString();
     }
 
     private String join(String... params) throws Exception {
@@ -154,8 +166,8 @@ public class ChessClient {
                    \u001b[35mcreate \u001B[36m<NAME>\u001B[0m - creates a game
                    \u001b[35mlist\u001B[0m - lists all games
                    \u001b[35mjoin \u001B[36m<ID> \u001B[0m[WHITE|\u001B[37mBLACK\u001B[0m] - joins a game as a color
-                   \u001b[35mobserve \u001B[36m<ID>\u001B[0m - join game as observer
-                   \u001b[35mlogout\u001B[0m - leave chess
+                   \u001b[35mobserve \u001B[36m<ID>\u001B[0m - join game as an observer
+                   \u001b[35mlogout\u001B[0m - logout of server
                    \u001b[35mquit\u001B[0m - leaves program
                    \u001b[35mhelp\u001B[0m - lists commands
                    """;
@@ -164,10 +176,10 @@ public class ChessClient {
 
     private void assertLoggedIn() throws Exception {
         if (state == State.LOGGEDOUT) {
-            throw new Exception("Must login to perform command\n");
+            throw new Exception("Must login to perform command");
         }
         else if (state == State.INGAME) {
-            throw new Exception("Unavailable while in a game\n");
+            throw new Exception("Unavailable while in a game");
         }
     }
 }
