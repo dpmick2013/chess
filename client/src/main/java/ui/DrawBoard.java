@@ -6,15 +6,15 @@ import static ui.EscapeSequences.*;
 
 public class DrawBoard {
     private static final int BOARD_SIZE = 8;
-    private static final String[] whiteBackRow =
+    private static final String[] WHITE_BACK_ROW =
         {WHITE_ROOK, WHITE_KNIGHT, WHITE_BISHOP, WHITE_QUEEN, WHITE_KING, WHITE_BISHOP, WHITE_KNIGHT, WHITE_ROOK};
-    private static final String[] blackBackRow =
+    private static final String[] BLACK_BACK_ROW =
         {BLACK_ROOK, BLACK_KNIGHT, BLACK_BISHOP, BLACK_QUEEN, BLACK_KING, BLACK_BISHOP, BLACK_KNIGHT, BLACK_ROOK};
-    private static final String[] whitePawnRow =
+    private static final String[] WHITE_PAWN_ROW =
         {WHITE_PAWN, WHITE_PAWN, WHITE_PAWN, WHITE_PAWN, WHITE_PAWN, WHITE_PAWN, WHITE_PAWN, WHITE_PAWN};
-    private static final String[] blackPawnRow =
+    private static final String[] BLACK_PAWN_ROW =
         {BLACK_PAWN, BLACK_PAWN, BLACK_PAWN, BLACK_PAWN, BLACK_PAWN, BLACK_PAWN, BLACK_PAWN, BLACK_PAWN};
-    private static final String[] emptyRow =
+    private static final String[] EMPTY_ROW =
         {EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY};
 
     public static void printBoardWhite() {
@@ -22,19 +22,19 @@ public class DrawBoard {
         printBorder(cols);
         for (int row = 0; row < BOARD_SIZE; row++) {
             if (row == 0) {
-                drawRow(ChessGame.TeamColor.BLACK, row, blackBackRow);
+                drawRow(ChessGame.TeamColor.BLACK, row, BLACK_BACK_ROW);
             }
             else if (row == 1) {
-                drawRow(ChessGame.TeamColor.BLACK, row, blackPawnRow);
+                drawRow(ChessGame.TeamColor.BLACK, row, BLACK_PAWN_ROW);
             }
             else if (row == 6) {
-                drawRow(ChessGame.TeamColor.WHITE, row, whitePawnRow);
+                drawRow(ChessGame.TeamColor.WHITE, row, WHITE_PAWN_ROW);
             }
             else if (row == 7) {
-                drawRow(ChessGame.TeamColor.WHITE, row, whiteBackRow);
+                drawRow(ChessGame.TeamColor.WHITE, row, WHITE_BACK_ROW);
             }
             else {
-                drawRow(ChessGame.TeamColor.WHITE, row, emptyRow);
+                drawRow(ChessGame.TeamColor.WHITE, row, EMPTY_ROW);
             }
         }
         printBorder(cols);
@@ -42,28 +42,28 @@ public class DrawBoard {
 
     public static void printBoardBlack() {
         String[] cols = {"h", "g", "f", "e", "d", "c", "b", "a"};
-        var temp1 = whiteBackRow[3];
-        var temp2 = blackBackRow[3];
-        whiteBackRow[3] = whiteBackRow[4];
-        blackBackRow[3] = blackBackRow[4];
-        whiteBackRow[4] = temp1;
-        blackBackRow[4] = temp2;
+        var temp1 = WHITE_BACK_ROW[3];
+        var temp2 = BLACK_BACK_ROW[3];
+        WHITE_BACK_ROW[3] = WHITE_BACK_ROW[4];
+        BLACK_BACK_ROW[3] = BLACK_BACK_ROW[4];
+        WHITE_BACK_ROW[4] = temp1;
+        BLACK_BACK_ROW[4] = temp2;
         printBorder(cols);
         for (int row = 0; row < BOARD_SIZE; row++) {
             if (row == 0) {
-                drawRow(ChessGame.TeamColor.WHITE, row, whiteBackRow);
+                drawRow(ChessGame.TeamColor.WHITE, row, WHITE_BACK_ROW);
             }
             else if (row == 1) {
-                drawRow(ChessGame.TeamColor.WHITE, row, whitePawnRow);
+                drawRow(ChessGame.TeamColor.WHITE, row, WHITE_PAWN_ROW);
             }
             else if (row == 6) {
-                drawRow(ChessGame.TeamColor.BLACK, row, blackPawnRow);
+                drawRow(ChessGame.TeamColor.BLACK, row, BLACK_PAWN_ROW);
             }
             else if (row == 7) {
-                drawRow(ChessGame.TeamColor.BLACK, row, blackBackRow);
+                drawRow(ChessGame.TeamColor.BLACK, row, BLACK_BACK_ROW);
             }
             else {
-                drawRow(ChessGame.TeamColor.WHITE, row, emptyRow);
+                drawRow(ChessGame.TeamColor.WHITE, row, EMPTY_ROW);
             }
         }
         printBorder(cols);
