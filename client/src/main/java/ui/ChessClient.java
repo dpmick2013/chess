@@ -153,6 +153,7 @@ public class ChessClient {
 
     private String observe(String... params) throws Exception {
         assertLoggedIn();
+        state = State.INGAME;
         DrawBoard.printBoardWhite();
         return String.format("Observing game %s", params[0]);
     }
