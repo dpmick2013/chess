@@ -131,10 +131,18 @@ public class ChessClient {
     private String join(String... params) throws Exception {
         assertLoggedIn();
         if (params.length == 2) {
-            int id = Integer.parseInt(params[0]);
+            int id;
+            try {
+                id = Integer.parseInt(params[0]);
+            } catch (NumberFormatException ex) {
+                return "Expected a number for <ID>";
+            }
             String color = params[1];
             color = color.toUpperCase();
             var list = server.listGames(authToken);
+            if (id > list.size() || id < 1) {
+                return "Game does not exist";
+            }
             var game = list.get(id - 1);
             server.joinGame(color, game.gameID(), authToken);
             if (Objects.equals(color, "WHITE")) {
@@ -153,9 +161,24 @@ public class ChessClient {
 
     private String observe(String... params) throws Exception {
         assertLoggedIn();
-        state = State.INGAME;
-        DrawBoard.printBoardWhite();
-        return String.format("Observing game %s", params[0]);
+        if (params.length == 1) {
+            int id;
+            try {
+                id = Integer.parseInt(params[0]);
+            } catch (NumberFormatException ex) {
+                return "Expected a number for <ID>";
+            }
+            var list = server.listGames(authToken);
+            if (id > list.size() || id < 1) {
+                return "Game does not exist";
+            }
+            state = State.INGAME;
+            DrawBoard.printBoardWhite();
+            return String.format("Observing game %s", params[0]);
+        }
+        else {
+            return "Expected <ID>";
+        }
     }
 
     private String logout() throws Exception {
