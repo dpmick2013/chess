@@ -1,5 +1,9 @@
 package ui;
 
+import chess.ChessBoard;
+import chess.ChessGame;
+import chess.ChessPiece;
+import chess.ChessPosition;
 import client.ServerFacade;
 import datamodel.GameResult;
 import datamodel.UserData;
@@ -146,10 +150,14 @@ public class ChessClient {
             var game = list.get(id - 1);
             server.joinGame(color, game.gameID(), authToken);
             if (Objects.equals(color, "WHITE")) {
-                DrawBoard.printBoardWhite();
+                var board = new ChessBoard();
+                board.resetBoard();
+                DrawBoard.printBoardWhite(board);
             }
             else {
-                DrawBoard.printBoardBlack();
+                var board = new ChessBoard();
+                board.resetBoard();
+                DrawBoard.printBoardBlack(board);
             }
             state = State.INGAME;
             return String.format("Joined game %s as %s player", params[0], params[1]);
@@ -173,7 +181,7 @@ public class ChessClient {
                 return "Game does not exist";
             }
             state = State.INGAME;
-            DrawBoard.printBoardWhite();
+            DrawBoard.printBoardWhite(new ChessBoard());
             return String.format("Observing game %s", params[0]);
         }
         else {
@@ -215,6 +223,10 @@ public class ChessClient {
         }
         else {
             return """
+                   \u001b[35mredraw\u001b[0m - redraws the chess board
+                   \u001b[35mmove\u001b[0m - move the indicated piece
+                   \u001b[35mhighlight\u001b[0m - show valid moves for indicated piece
+                   \u001b[35mresign\u001b[0m - quit the game
                    \u001b[35mleave\u001b[0m - leave the current game
                    \u001b[35mquit\u001B[0m - leaves program
                    \u001b[35mhelp\u001B[0m - lists commands

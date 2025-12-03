@@ -4,6 +4,8 @@ import java.util.Collection;
 import java.util.HashSet;
 import java.util.Objects;
 
+import static utilities.EscapeSequences.*;
+
 /**
  * Represents a single chess piece
  * <p>
@@ -351,11 +353,28 @@ public class ChessPiece {
 
     @Override
     public String toString() {
-        return "ChessPiece{" +
-                "pieceColor=" + pieceColor +
-                ", type=" + type +
-                ", enemy=" + enemy +
-                '}';
+        var pieceString = "";
+        if (pieceColor == ChessGame.TeamColor.WHITE) {
+            pieceString =
+                (type == PieceType.ROOK) ? WHITE_ROOK :
+                (type == PieceType.KNIGHT) ? WHITE_KNIGHT :
+                (type == PieceType.BISHOP) ? WHITE_BISHOP :
+                (type == PieceType.QUEEN) ? WHITE_QUEEN :
+                (type == PieceType.KING) ? WHITE_KING :
+                WHITE_PAWN;
+            pieceString = "\u001b[38;5;12m" + pieceString + "\u001B[39m";
+        }
+        else {
+            pieceString =
+            (type == PieceType.ROOK) ? BLACK_ROOK :
+            (type == PieceType.KNIGHT) ? BLACK_KNIGHT :
+            (type == PieceType.BISHOP) ? BLACK_BISHOP :
+            (type == PieceType.QUEEN) ? BLACK_QUEEN :
+            (type == PieceType.KING) ? BLACK_KING :
+            BLACK_PAWN;
+            pieceString = "\u001B[38;5;160m" + pieceString + "\u001B[39m";
+        }
+        return pieceString;
     }
 
     @Override
