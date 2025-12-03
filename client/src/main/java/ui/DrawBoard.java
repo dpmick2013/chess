@@ -67,7 +67,7 @@ public class DrawBoard {
 
     private static void drawRow(int row, String[] pieces, int[] highlights) {
         int rank = row + 1;
-        String bgColor = "";
+        String bgColor;
         System.out.print(SET_BG_COLOR_BLACK + SET_TEXT_COLOR_WHITE + "\u2004\u2002" + rank + "\u2004\u2002" + RESET_BG_COLOR);
         if (highlights == null) {
             for (int col = 0; col < BOARD_SIZE; col++) {

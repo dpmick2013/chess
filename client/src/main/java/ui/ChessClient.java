@@ -20,6 +20,8 @@ public class ChessClient {
     private ChessGame gameObject;
     private ChessBoard board;
     private ChessGame.TeamColor teamColor;
+    boolean waiting;
+    boolean confirmed;
 
     public ChessClient(String serverURL) {
         server = new ServerFacade(serverURL);
@@ -62,6 +64,23 @@ public class ChessClient {
             String[] tokens = input.split(" ");
             String cmd = (tokens.length > 0) ? tokens[0] : "help";
             String[] params = Arrays.copyOfRange(tokens, 1, tokens.length);
+            String str = "";
+            if (waiting) {
+                switch (cmd) {
+                    case "y" -> {
+                        waiting = false;
+                        confirmed = true;
+                        str = resign();
+                    }
+                    case "n" -> {
+                        waiting = false;
+                        confirmed = false;
+                        str = "Resign canceled";
+                    }
+                    default -> str = "Invalid input";
+                }
+                return str;
+            }
             return switch (cmd) {
                 case "register" -> register(params);
                 case "login" -> login(params);
@@ -72,6 +91,7 @@ public class ChessClient {
                 case "logout" -> logout();
                 case "redraw" -> redraw();
                 case "highlight" -> highlight(params);
+                case "resign" -> resign();
                 case "leave" -> leave();
                 case "quit" -> "quit";
                 default -> help();
@@ -235,6 +255,17 @@ public class ChessClient {
             DrawBoard.printHighlightsBlack(board, moves);
         }
         return "";
+    }
+
+    private String resign() {
+        if (!confirmed) {
+            waiting = true;
+            return "Are you sure you want to resign (y/n)";
+        }
+        else {
+            confirmed = false;
+            return "You have resigned, game over";
+        }
     }
 
     public String help() {
