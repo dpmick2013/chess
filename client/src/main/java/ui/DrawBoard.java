@@ -1,9 +1,8 @@
 package ui;
 
-import chess.ChessBoard;
-import chess.ChessGame;
-import chess.ChessPiece;
-import chess.ChessPosition;
+import chess.*;
+
+import java.util.Collection;
 
 import static ui.EscapeSequences.*;
 
@@ -15,7 +14,25 @@ public class DrawBoard {
         printBorder(cols);
         var boardString = convertBoardWhite(board);
         for (int row = 7; row >= 0; row--) {
-            drawRow(ChessGame.TeamColor.WHITE, row, boardString[row]);
+            drawRow(row, boardString[row], null);
+        }
+        printBorder(cols);
+    }
+
+    public static void printHighlightsWhite(ChessBoard board, Collection<ChessMove> moves) {
+        int[][] highlights = new int[8][8];
+        ChessPosition end;
+        ChessPosition start = moves.iterator().next().getStartPosition();
+        highlights[start.getRow() - 1][start.getColumn() - 1] = 2;
+        String[] cols = {"a", "b", "c", "d", "e", "f", "g", "h"};
+        printBorder(cols);
+        for (ChessMove move : moves) {
+            end = move.getEndPosition();
+            highlights[end.getRow() - 1][end.getColumn() - 1] = 1;
+        }
+        var boardString = convertBoardWhite(board);
+        for (int row = 7; row >= 0; row--) {
+            drawRow(row, boardString[row], highlights[row]);
         }
         printBorder(cols);
     }
@@ -25,19 +42,54 @@ public class DrawBoard {
         printBorder(cols);
         var boardString = convertBoardBlack(board);
         for (int row = 0; row < BOARD_SIZE; row++) {
-            drawRow(ChessGame.TeamColor.BLACK, row, boardString[row]);
+            drawRow(row, boardString[row], null);
         }
         printBorder(cols);
     }
 
-    private static void drawRow(ChessGame.TeamColor color, int row, String[] pieces) {
-        int rank = (color == ChessGame.TeamColor.WHITE) ? 8 - row : row + 1;
+    public static void printHighlightsBlack(ChessBoard board, Collection<ChessMove> moves) {
+        int[][] highlights = new int[8][8];
+        ChessPosition end;
+        ChessPosition start = moves.iterator().next().getStartPosition();
+        highlights[start.getRow() - 1][8 - start.getColumn()] = 2;
+        String[] cols = {"h", "g", "f", "e", "d", "c", "b", "a"};
+        printBorder(cols);
+        for (ChessMove move : moves) {
+            end = move.getEndPosition();
+            highlights[end.getRow() - 1][8 - end.getColumn()] = 1;
+        }
+        var boardString = convertBoardBlack(board);
+        for (int row = 0; row < 8; row++) {
+            drawRow(row, boardString[row], highlights[row]);
+        }
+        printBorder(cols);
+    }
+
+    private static void drawRow(int row, String[] pieces, int[] highlights) {
+        int rank = row + 1;
+        String bgColor = "";
         System.out.print(SET_BG_COLOR_BLACK + SET_TEXT_COLOR_WHITE + "\u2004\u2002" + rank + "\u2004\u2002" + RESET_BG_COLOR);
-        for (int col = 0; col < BOARD_SIZE; col++) {
-            boolean isDark = (row + col) % 2 == 1;
-            String bgColor = isDark ? SET_BG_COLOR_LIGHT_GREY : SET_BG_COLOR_WHITE;
-            String piece = pieces[col];
-            System.out.print(bgColor + piece + RESET_BG_COLOR);
+        if (highlights == null) {
+            for (int col = 0; col < BOARD_SIZE; col++) {
+                boolean isDark = (row + col) % 2 == 1;
+                bgColor = isDark ? SET_BG_COLOR_LIGHT_GREY : SET_BG_COLOR_WHITE;
+                String piece = pieces[col];
+                System.out.print(bgColor + piece + RESET_BG_COLOR);
+            }
+        }
+        else {
+            for (int col = 0; col < BOARD_SIZE; col++) {
+                boolean isDark = (row + col) % 2 == 1;
+                bgColor = isDark ? SET_BG_COLOR_LIGHT_GREY : SET_BG_COLOR_WHITE;
+                if (highlights[col] == 1) {
+                    bgColor = bgColor + SET_BG_COLOR_YELLOW;
+                }
+                else if (highlights[col] == 2) {
+                    bgColor = bgColor + SET_BG_COLOR_GREEN;
+                }
+                String piece = pieces[col];
+                System.out.print(bgColor + piece + RESET_BG_COLOR);
+            }
         }
         System.out.println(SET_BG_COLOR_BLACK + SET_TEXT_COLOR_WHITE + "\u2004\u2002" + rank + "\u2004\u2002" + RESET_BG_COLOR);
     }

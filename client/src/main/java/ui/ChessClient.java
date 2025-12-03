@@ -71,6 +71,7 @@ public class ChessClient {
                 case "observe" -> observe(params);
                 case "logout" -> logout();
                 case "redraw" -> redraw();
+                case "highlight" -> highlight(params);
                 case "leave" -> leave();
                 case "quit" -> "quit";
                 default -> help();
@@ -220,6 +221,22 @@ public class ChessClient {
         return "You left the game";
     }
 
+    private String highlight(String... params) throws Exception {
+        var place = params[0];
+        var position = getPosFromInput(place);
+        var moves = gameObject.validMoves(position);
+        if (moves == null || moves.isEmpty()) {
+            throw new Exception("No valid moves");
+        }
+        if (teamColor == ChessGame.TeamColor.WHITE) {
+            DrawBoard.printHighlightsWhite(board, moves);
+        }
+        else {
+            DrawBoard.printHighlightsBlack(board, moves);
+        }
+        return "";
+    }
+
     public String help() {
         if (state == State.LOGGEDOUT) {
             return """
@@ -266,5 +283,29 @@ public class ChessClient {
         if (state != State.INGAME) {
             throw new Exception("Must be in a game");
         }
+    }
+
+    private int getColFromLetter(String letter) {
+        return (Objects.equals("A", letter)) ? 1 :
+               (Objects.equals("B", letter)) ? 2 :
+               (Objects.equals("C", letter)) ? 3 :
+               (Objects.equals("D", letter)) ? 4 :
+               (Objects.equals("E", letter)) ? 5 :
+               (Objects.equals("F", letter)) ? 6 :
+               (Objects.equals("G", letter)) ? 7 :
+               8;
+    }
+
+    private ChessPosition getPosFromInput(String input) throws Exception {
+        if (input.length() != 2) {
+            throw new Exception("Invalid input");
+        }
+        String[] tokens = input.split("");
+        if (!Character.isLetter(tokens[0].charAt(0))) {
+            throw new Exception("Invalid input");
+        }
+        int col = getColFromLetter(tokens[0].toUpperCase());
+        int row = Integer.parseInt(tokens[1]);
+        return new ChessPosition(row, col);
     }
 }
