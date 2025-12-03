@@ -17,6 +17,9 @@ public class ChessClient {
     private State state = State.LOGGEDOUT;
     private final ServerFacade server;
     private String authToken;
+    private ChessGame gameObject;
+    private ChessBoard board;
+    private ChessGame.TeamColor teamColor;
 
     public ChessClient(String serverURL) {
         server = new ServerFacade(serverURL);
@@ -67,6 +70,7 @@ public class ChessClient {
                 case "join" -> join(params);
                 case "observe" -> observe(params);
                 case "logout" -> logout();
+                case "redraw" -> redraw();
                 case "leave" -> leave();
                 case "quit" -> "quit";
                 default -> help();
@@ -149,14 +153,14 @@ public class ChessClient {
             }
             var game = list.get(id - 1);
             server.joinGame(color, game.gameID(), authToken);
+            gameObject = new ChessGame();
+            board = gameObject.getBoard();
             if (Objects.equals(color, "WHITE")) {
-                var board = new ChessBoard();
-                board.resetBoard();
+                teamColor = ChessGame.TeamColor.WHITE;
                 DrawBoard.printBoardWhite(board);
             }
             else {
-                var board = new ChessBoard();
-                board.resetBoard();
+                teamColor = ChessGame.TeamColor.BLACK;
                 DrawBoard.printBoardBlack(board);
             }
             state = State.INGAME;
@@ -181,7 +185,7 @@ public class ChessClient {
                 return "Game does not exist";
             }
             state = State.INGAME;
-            DrawBoard.printBoardWhite(new ChessBoard());
+            DrawBoard.printBoardWhite(board);
             return String.format("Observing game %s", params[0]);
         }
         else {
@@ -196,7 +200,22 @@ public class ChessClient {
         return "Logged out";
     }
 
-    private String leave() {
+    private String redraw() throws Exception {
+        assertInGame();
+        if (teamColor == ChessGame.TeamColor.WHITE) {
+            DrawBoard.printBoardWhite(board);
+        }
+        else if (teamColor == ChessGame.TeamColor.BLACK){
+            DrawBoard.printBoardBlack(board);
+        }
+        else {
+            throw new Exception("How'd you get here");
+        }
+        return "";
+    }
+
+    private String leave() throws Exception {
+        assertInGame();
         state = State.LOGGEDIN;
         return "You left the game";
     }
@@ -240,6 +259,12 @@ public class ChessClient {
         }
         else if (state == State.INGAME) {
             throw new Exception("Unavailable while in a game");
+        }
+    }
+
+    private void assertInGame() throws Exception {
+        if (state != State.INGAME) {
+            throw new Exception("Must be in a game");
         }
     }
 }

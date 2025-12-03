@@ -9,16 +9,6 @@ import static ui.EscapeSequences.*;
 
 public class DrawBoard {
     private static final int BOARD_SIZE = 8;
-    private static final String[] WHITE_BACK_ROW =
-        {WHITE_ROOK, WHITE_KNIGHT, WHITE_BISHOP, WHITE_QUEEN, WHITE_KING, WHITE_BISHOP, WHITE_KNIGHT, WHITE_ROOK};
-    private static final String[] BLACK_BACK_ROW =
-        {BLACK_ROOK, BLACK_KNIGHT, BLACK_BISHOP, BLACK_QUEEN, BLACK_KING, BLACK_BISHOP, BLACK_KNIGHT, BLACK_ROOK};
-    private static final String[] WHITE_PAWN_ROW =
-        {WHITE_PAWN, WHITE_PAWN, WHITE_PAWN, WHITE_PAWN, WHITE_PAWN, WHITE_PAWN, WHITE_PAWN, WHITE_PAWN};
-    private static final String[] BLACK_PAWN_ROW =
-        {BLACK_PAWN, BLACK_PAWN, BLACK_PAWN, BLACK_PAWN, BLACK_PAWN, BLACK_PAWN, BLACK_PAWN, BLACK_PAWN};
-    private static final String[] EMPTY_ROW =
-        {EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY};
 
     public static void printBoardWhite(ChessBoard board) {
         String[] cols = {"a", "b", "c", "d", "e", "f", "g", "h"};
@@ -32,31 +22,11 @@ public class DrawBoard {
 
     public static void printBoardBlack(ChessBoard board) {
         String[] cols = {"h", "g", "f", "e", "d", "c", "b", "a"};
-        String[] whiteBackRow = {WHITE_ROOK, WHITE_KNIGHT, WHITE_BISHOP, WHITE_KING, WHITE_QUEEN, WHITE_BISHOP, WHITE_KNIGHT, WHITE_ROOK};
-        String[] blackBackRow =
-                {BLACK_ROOK, BLACK_KNIGHT, BLACK_BISHOP, BLACK_KING, BLACK_QUEEN, BLACK_BISHOP, BLACK_KNIGHT, BLACK_ROOK};
         printBorder(cols);
         var boardString = convertBoardBlack(board);
         for (int row = 0; row < BOARD_SIZE; row++) {
             drawRow(ChessGame.TeamColor.BLACK, row, boardString[row]);
         }
-//        for (int row = 0; row < BOARD_SIZE; row++) {
-//            if (row == 0) {
-//                drawRow(ChessGame.TeamColor.WHITE, row, whiteBackRow);
-//            }
-//            else if (row == 1) {
-//                drawRow(ChessGame.TeamColor.WHITE, row, WHITE_PAWN_ROW);
-//            }
-//            else if (row == 6) {
-//                drawRow(ChessGame.TeamColor.BLACK, row, BLACK_PAWN_ROW);
-//            }
-//            else if (row == 7) {
-//                drawRow(ChessGame.TeamColor.BLACK, row, blackBackRow);
-//            }
-//            else {
-//                drawRow(ChessGame.TeamColor.WHITE, row, EMPTY_ROW);
-//            }
-//        }
         printBorder(cols);
     }
 

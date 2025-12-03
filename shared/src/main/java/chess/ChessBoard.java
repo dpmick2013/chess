@@ -107,47 +107,8 @@ public class ChessBoard {
 
     @Override
     public String toString() {
-        var boardString = "";
         var pieceString = "";
-        var testString = new StringBuilder();
-        ChessPiece piece;
-        for (int i = 8; i > 0; i--) {
-            for (int j = 1; j < 9; j++) {
-                piece = getPiece(new ChessPosition(i, j));
-                if (j == 8) {
-                    if (piece == null) {
-                        boardString = boardString + "| \u2003 |\n";
-                        testString.append("| \u2003 |\n");
-                    }
-                    else {
-                        pieceString = piece.toString();
-                        boardString = boardString + "|" + pieceString + "|\n";
-                        testString.append("|");
-                        testString.append(pieceString);
-                        testString.append("|\n");
-                    }
-                }
-                else {
-                    if (piece == null) {
-                        boardString = boardString + "| \u2003 ";
-                        testString.append("| \u2003 ");
-                    }
-                    else {
-                        pieceString = piece.toString();
-                        boardString = boardString + "|" + pieceString;
-                        testString.append("|");
-                        testString.append(pieceString);
-                    }
-                }
-            }
-        }
-//        return boardString;
-        return testString.toString();
-    }
-
-    private StringBuilder loopBoardWhite() {
         var boardString = new StringBuilder();
-        var pieceString = "";
         ChessPiece piece;
         for (int i = 8; i > 0; i--) {
             for (int j = 1; j < 9; j++) {
@@ -175,13 +136,7 @@ public class ChessBoard {
                 }
             }
         }
-        return boardString;
-    }
-
-    private StringBuilder loopBoardBlack() {
-        var boardString = new StringBuilder();
-
-        return boardString;
+        return boardString.toString();
     }
 
     @Override
