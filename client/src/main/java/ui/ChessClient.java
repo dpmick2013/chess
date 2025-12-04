@@ -1,9 +1,6 @@
 package ui;
 
-import chess.ChessBoard;
-import chess.ChessGame;
-import chess.ChessPiece;
-import chess.ChessPosition;
+import chess.*;
 import client.ServerFacade;
 import datamodel.GameResult;
 import datamodel.UserData;
@@ -22,6 +19,7 @@ public class ChessClient {
     private ChessGame.TeamColor teamColor;
     boolean waiting;
     boolean confirmed;
+    boolean promoting;
 
     public ChessClient(String serverURL) {
         server = new ServerFacade(serverURL);
@@ -81,6 +79,23 @@ public class ChessClient {
                 }
                 return str;
             }
+            if (promoting) {
+                switch (cmd) {
+                    case "Q" -> {
+                        str = move(ChessPiece.PieceType.QUEEN, params);
+                    }
+                    case "R" -> {
+                        str = move(ChessPiece.PieceType.ROOK, params);
+                    }
+                    case "B" -> {
+                        str = move(ChessPiece.PieceType.BISHOP, params);
+                    }
+                    case "N" -> {
+                        str = move(ChessPiece.PieceType.KNIGHT, params);
+                    }
+                }
+                return str;
+            }
             return switch (cmd) {
                 case "register" -> register(params);
                 case "login" -> login(params);
@@ -91,6 +106,7 @@ public class ChessClient {
                 case "logout" -> logout();
                 case "redraw" -> redraw();
                 case "highlight" -> highlight(params);
+                case "move" -> move(null, params);
                 case "resign" -> resign();
                 case "leave" -> leave();
                 case "quit" -> "quit";
@@ -235,17 +251,40 @@ public class ChessClient {
         return "";
     }
 
-    private String leave() throws Exception {
-        assertInGame();
-        state = State.LOGGEDIN;
-        return "You left the game";
+    private String move(ChessPiece.PieceType promotion, String... params) throws Exception {
+        if (gameObject.getTeamTurn() != teamColor) {
+            throw new Exception("It is not your turn");
+        }
+        var startSquare = params[0];
+        var endSquare = params[1];
+        var start = getPosFromInput(startSquare);
+        var end = getPosFromInput(endSquare);
+        var piece = board.getPiece(start);
+        if (piece.getTeamColor() != teamColor) {
+            throw new Exception("Not your piece");
+        }
+        if (piece.getPieceType() == ChessPiece.PieceType.PAWN && !promoting) {
+            if (teamColor == ChessGame.TeamColor.WHITE) {
+                if (end.getRow() == 8) {
+                    promoting = true;
+                    return "Pick a promotion piece (Q/R/B/N)";
+                }
+            }
+        }
+        var move = new ChessMove(start, end, promotion);
+        promoting = false;
+        gameObject.makeMove(move);
+        return String.format("Move made from %s to %s", params[0], params[1]);
     }
 
     private String highlight(String... params) throws Exception {
         var place = params[0];
         var position = getPosFromInput(place);
         var moves = gameObject.validMoves(position);
-        if (moves == null || moves.isEmpty()) {
+        if (moves == null) {
+            throw new Exception("No piece here");
+        }
+        if (moves.isEmpty()) {
             throw new Exception("No valid moves");
         }
         if (teamColor == ChessGame.TeamColor.WHITE) {
@@ -266,6 +305,12 @@ public class ChessClient {
             confirmed = false;
             return "You have resigned, game over";
         }
+    }
+
+    private String leave() throws Exception {
+        assertInGame();
+        state = State.LOGGEDIN;
+        return "You left the game";
     }
 
     public String help() {
@@ -291,8 +336,8 @@ public class ChessClient {
         else {
             return """
                    \u001b[35mredraw\u001b[0m - redraws the chess board
-                   \u001b[35mmove\u001b[0m - move the indicated piece
-                   \u001b[35mhighlight\u001b[0m - show valid moves for indicated piece
+                   \u001b[35mmove \u001B[36m<SQUARE>\u001b[0m - move the indicated piece
+                   \u001b[35mhighlight \u001B[36m<START> <END>\u001b[0m - show valid moves for indicated piece
                    \u001b[35mresign\u001b[0m - quit the game
                    \u001b[35mleave\u001b[0m - leave the current game
                    \u001b[35mquit\u001B[0m - leaves program

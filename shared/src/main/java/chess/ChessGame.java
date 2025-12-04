@@ -12,6 +12,7 @@ import java.util.Objects;
 public class ChessGame {
     private final ChessBoard gameBoard = new ChessBoard();
     private TeamColor teamTurn = TeamColor.WHITE;
+
     public ChessGame() {
         gameBoard.resetBoard();
     }

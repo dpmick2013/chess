@@ -68,11 +68,11 @@ public class DrawBoard {
     private static void drawRow(int row, String[] pieces, int[] highlights) {
         int rank = row + 1;
         String bgColor;
-        System.out.print(SET_BG_COLOR_BLACK + SET_TEXT_COLOR_WHITE + "\u2004\u2002" + rank + "\u2004\u2002" + RESET_BG_COLOR);
+        System.out.print(SET_BG_COLOR_LIGHT_GREY + SET_TEXT_COLOR_BLACK + "\u2004\u2002" + rank + "\u2004\u2002" + RESET_BG_COLOR);
         if (highlights == null) {
             for (int col = 0; col < BOARD_SIZE; col++) {
                 boolean isDark = (row + col) % 2 == 1;
-                bgColor = isDark ? SET_BG_COLOR_LIGHT_GREY : SET_BG_COLOR_WHITE;
+                bgColor = isDark ? SET_BG_COLOR_BLACK : SET_BG_COLOR_WHITE;
                 String piece = pieces[col];
                 System.out.print(bgColor + piece + RESET_BG_COLOR);
             }
@@ -80,26 +80,28 @@ public class DrawBoard {
         else {
             for (int col = 0; col < BOARD_SIZE; col++) {
                 boolean isDark = (row + col) % 2 == 1;
-                bgColor = isDark ? SET_BG_COLOR_LIGHT_GREY : SET_BG_COLOR_WHITE;
                 if (highlights[col] == 1) {
-                    bgColor = bgColor + SET_BG_COLOR_YELLOW;
+                    bgColor = isDark ? SET_BG_COLOR_DARK_GREEN : SET_BG_COLOR_GREEN;
                 }
                 else if (highlights[col] == 2) {
-                    bgColor = bgColor + SET_BG_COLOR_GREEN;
+                    bgColor = SET_BG_COLOR_YELLOW;
+                }
+                else {
+                    bgColor = isDark ? SET_BG_COLOR_BLACK : SET_BG_COLOR_WHITE;
                 }
                 String piece = pieces[col];
                 System.out.print(bgColor + piece + RESET_BG_COLOR);
             }
         }
-        System.out.println(SET_BG_COLOR_BLACK + SET_TEXT_COLOR_WHITE + "\u2004\u2002" + rank + "\u2004\u2002" + RESET_BG_COLOR);
+        System.out.println(SET_BG_COLOR_LIGHT_GREY + SET_TEXT_COLOR_BLACK + "\u2004\u2002" + rank + "\u2004\u2002" + RESET_BG_COLOR);
     }
 
     private static void printBorder(String[] cols) {
-        System.out.print(SET_BG_COLOR_BLACK + EMPTY);
+        System.out.print(SET_BG_COLOR_LIGHT_GREY + EMPTY);
         for (String col : cols) {
-            System.out.print(SET_BG_COLOR_BLACK + "\u2004\u2002" + SET_TEXT_COLOR_WHITE + col + "\u2004\u2002");
+            System.out.print(SET_BG_COLOR_LIGHT_GREY + "\u2004\u2002" + SET_TEXT_COLOR_BLACK + col + "\u2004\u2002");
         }
-        System.out.println(SET_BG_COLOR_BLACK + EMPTY + RESET_BG_COLOR + RESET_TEXT_COLOR);
+        System.out.println(SET_BG_COLOR_LIGHT_GREY + EMPTY + RESET_BG_COLOR + RESET_TEXT_COLOR);
     }
 
     private static String[][] convertBoardWhite(ChessBoard board) {
