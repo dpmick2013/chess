@@ -80,21 +80,13 @@ public class ChessClient {
                 return str;
             }
             if (promoting) {
-                switch (cmd) {
-                    case "Q" -> {
-                        str = move(ChessPiece.PieceType.QUEEN, params);
-                    }
-                    case "R" -> {
-                        str = move(ChessPiece.PieceType.ROOK, params);
-                    }
-                    case "B" -> {
-                        str = move(ChessPiece.PieceType.BISHOP, params);
-                    }
-                    case "N" -> {
-                        str = move(ChessPiece.PieceType.KNIGHT, params);
-                    }
-                }
-                return str;
+                return switch (cmd) {
+                    case "Q" -> move(ChessPiece.PieceType.QUEEN, params);
+                    case "R" -> move(ChessPiece.PieceType.ROOK, params);
+                    case "B" -> move(ChessPiece.PieceType.BISHOP, params);
+                    case "N" -> move(ChessPiece.PieceType.KNIGHT, params);
+                    default -> "Invalid Input";
+                };
             }
             return switch (cmd) {
                 case "register" -> register(params);

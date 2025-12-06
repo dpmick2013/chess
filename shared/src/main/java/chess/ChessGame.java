@@ -12,6 +12,13 @@ import java.util.Objects;
 public class ChessGame {
     private final ChessBoard gameBoard = new ChessBoard();
     private TeamColor teamTurn = TeamColor.WHITE;
+    private GameStatus status = GameStatus.PLAYING;
+
+    public enum GameStatus {
+        PLAYING,
+        STALEMATE,
+        CHECKMATE
+    }
 
     public ChessGame() {
         gameBoard.resetBoard();
@@ -31,6 +38,10 @@ public class ChessGame {
      */
     public void setTeamTurn(TeamColor team) {
         teamTurn = team;
+    }
+
+    public GameStatus getGameStatus() {
+        return status;
     }
 
     /**
@@ -111,7 +122,11 @@ public class ChessGame {
      */
     public boolean isInCheckmate(TeamColor teamColor) {
         if (checkKingMoves(teamColor) && checkIfStuck(gameBoard, teamColor)) {
-            return isInCheck(teamColor);
+//            return isInCheck(teamColor);
+            if (isInCheck(teamColor)) {
+                status = GameStatus.CHECKMATE;
+                return true;
+            }
         }
         return false;
     }
@@ -125,7 +140,11 @@ public class ChessGame {
      */
     public boolean isInStalemate(TeamColor teamColor) {
         if (checkKingMoves(teamColor) && checkIfStuck(gameBoard, teamColor)) {
-            return !isInCheck(teamColor);
+//            return !isInCheck(teamColor);
+            if (!isInCheck(teamColor)) {
+                status = GameStatus.STALEMATE;
+                return true;
+            }
         }
         return false;
     }
