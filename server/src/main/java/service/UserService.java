@@ -79,7 +79,20 @@ public class UserService {
         }
     }
 
-    public static String generateAuthToken() {
+    public String getUsernameFromAuth(String authToken) throws Exception {
+        AuthData auth = null;
+        try {
+            auth = dataAccess.getAuth(authToken);
+        } catch (DataAccessException ex) {
+            sqlExceptionHandler(ex);
+        }
+        if (auth == null) {
+            throw new UnauthorizedException("Error: unauthorized");
+        }
+        return auth.username();
+    }
+
+    private static String generateAuthToken() {
         return UUID.randomUUID().toString();
     }
 

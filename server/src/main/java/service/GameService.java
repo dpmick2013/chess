@@ -52,12 +52,12 @@ public class GameService {
             throw new BadRequestException("Error: bad request");
         }
         var auth = checkAuth(authToken);
-        GameData game = null;
-        try {
-            game = dataAccess.getGame(gameID);
-        } catch (DataAccessException ex) {
-            sqlExceptionHandler(ex);
-        }
+        GameData game = getGame(gameID);
+//        try {
+//            game = dataAccess.getGame(gameID);
+//        } catch (DataAccessException ex) {
+//            sqlExceptionHandler(ex);
+//        }
         if (game == null) {
             throw new BadRequestException("Error: game does not exist");
         }
@@ -76,6 +76,35 @@ public class GameService {
         } catch (DataAccessException ex) {
             sqlExceptionHandler(ex);
         }
+    }
+
+    public GameData getGame(int gameID) throws Exception {
+        GameData game = null;
+        try {
+            game = dataAccess.getGame(gameID);
+        } catch (DataAccessException ex) {
+            sqlExceptionHandler(ex);
+        }
+        return game;
+    }
+
+    public String getPlayerColor(String username, int gameID) throws Exception {
+        var game = getGame(gameID);
+        String whiteUser = "";
+        String blackUser = "";
+        try {
+            whiteUser = dataAccess.getPlayer(ChessGame.TeamColor.WHITE, game);
+            blackUser = dataAccess.getPlayer(ChessGame.TeamColor.BLACK, game);
+        } catch(DataAccessException ex) {
+            sqlExceptionHandler(ex);
+        }
+        if (username.equals(whiteUser)) {
+            return "white";
+        }
+        else if (username.equals(blackUser)) {
+            return "black";
+        }
+        return "";
     }
 
     private AuthData checkAuth(String token) throws Exception {
