@@ -10,6 +10,7 @@ import datamodel.UserData;
 import exception.ServerException;
 import io.javalin.*;
 import io.javalin.http.Context;
+import server.websocket.WebSocketHandler;
 import service.AdminService;
 import service.GameService;
 import service.UserService;
@@ -22,6 +23,7 @@ public class Server {
     private final UserService userService;
     private final GameService gameService;
     private final AdminService adminService;
+    private final WebSocketHandler webSocketHandler;
 
     public Server() {
 //        DataAccess dataAccess = new MemoryDataAccess();
@@ -29,6 +31,7 @@ public class Server {
         userService = new UserService(dataAccess);
         gameService = new GameService(dataAccess);
         adminService = new AdminService(dataAccess);
+        webSocketHandler = new WebSocketHandler(userService, gameService);
         server = Javalin.create(config -> config.staticFiles.add("web"));
 
         server.delete("db", this::clear);
@@ -38,6 +41,11 @@ public class Server {
         server.get("game", this::listGames);
         server.post("game", this::createGame);
         server.put("game", this::joinGame);
+        server.ws("/ws", ws -> {
+            ws.onConnect(webSocketHandler);
+            ws.onMessage(webSocketHandler);
+            ws.onClose(webSocketHandler);
+        });
         server.exception(ServerException.class, this::exceptionHandler);
 
         // Register your endpoints and exception handlers here.

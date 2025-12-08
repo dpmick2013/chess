@@ -4,6 +4,8 @@ import chess.*;
 import client.ServerFacade;
 import datamodel.GameResult;
 import datamodel.UserData;
+import websocket.ServerMessageHandler;
+import websocket.WebSocketFacade;
 
 import java.util.Arrays;
 import java.util.Objects;
@@ -13,6 +15,8 @@ public class ChessClient {
 
     private State state = State.LOGGEDOUT;
     private final ServerFacade server;
+    private final ServerMessageHandler messageHandler;
+    private final WebSocketFacade ws;
     private String authToken;
     private ChessGame gameObject;
     private ChessBoard board;
@@ -21,8 +25,10 @@ public class ChessClient {
     boolean confirmed;
     boolean promoting;
 
-    public ChessClient(String serverURL) {
+    public ChessClient(String serverURL) throws Exception {
+        messageHandler = new ServerMessageHandler(this);
         server = new ServerFacade(serverURL);
+        ws = new WebSocketFacade(serverURL, messageHandler);
     }
 
     public enum State {
@@ -182,16 +188,15 @@ public class ChessClient {
             }
             var game = list.get(id - 1);
             server.joinGame(color, game.gameID(), authToken);
-            gameObject = new ChessGame();
-            board = gameObject.getBoard();
-            if (Objects.equals(color, "WHITE")) {
+            if (color.equals("WHITE")) {
                 teamColor = ChessGame.TeamColor.WHITE;
-                DrawBoard.printBoardWhite(board);
             }
-            else {
+            else if (color.equals("BLACK")){
                 teamColor = ChessGame.TeamColor.BLACK;
-                DrawBoard.printBoardBlack(board);
             }
+            ws.connect(authToken, id);
+//            gameObject = new ChessGame();
+//            board = gameObject.getBoard();
             state = State.INGAME;
             return String.format("Joined game %s as %s player", params[0], params[1]);
         }
@@ -375,5 +380,17 @@ public class ChessClient {
         int col = getColFromLetter(tokens[0].toUpperCase());
         int row = Integer.parseInt(tokens[1]);
         return new ChessPosition(row, col);
+    }
+
+    public void setGame(ChessGame game) {
+        gameObject = game;
+    }
+
+    public void setBoard(ChessBoard board) {
+        this.board = board;
+    }
+
+    public ChessGame.TeamColor getColor() {
+        return teamColor;
     }
 }

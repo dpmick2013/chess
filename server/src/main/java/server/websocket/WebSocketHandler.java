@@ -28,13 +28,13 @@ public class WebSocketHandler implements WsConnectHandler,  WsMessageHandler, Ws
     }
 
     @Override
-    public void handleConnect(@NotNull WsConnectContext ctx) throws Exception {
+    public void handleConnect(@NotNull WsConnectContext ctx) {
         System.out.println("Websocket connected");
         ctx.enableAutomaticPings();
     }
 
     @Override
-    public void handleMessage(@NotNull WsMessageContext ctx) throws Exception {
+    public void handleMessage(@NotNull WsMessageContext ctx) {
         try {
             UserGameCommand command = new Gson().fromJson(ctx.message(), UserGameCommand.class);
             switch(command.getCommandType()) {
@@ -44,14 +44,13 @@ public class WebSocketHandler implements WsConnectHandler,  WsMessageHandler, Ws
 //                case RESIGN -> handleResignCommand(ctx, command);
             }
         } catch(Exception ex) {
-            // Catch unexpected errors and notify client
             sendError(ctx.session, "Server error: " + ex.getMessage());
         }
 
     }
 
     @Override
-    public void handleClose(@NotNull WsCloseContext ctx) throws Exception {
+    public void handleClose(@NotNull WsCloseContext ctx) {
         System.out.println("Websocket closed");
     }
 
