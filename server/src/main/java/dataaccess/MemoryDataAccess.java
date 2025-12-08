@@ -55,6 +55,11 @@ public class MemoryDataAccess implements DataAccess {
     }
 
     @Override
+    public void updateGame(int gameID, ChessGame game) throws DataAccessException {
+
+    }
+
+    @Override
     public GameList getGameList() {
         ArrayList<GameResult> list = new ArrayList<>();
         for (GameData game : games.values()) {

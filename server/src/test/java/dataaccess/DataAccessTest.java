@@ -1,6 +1,8 @@
 package dataaccess;
 
 import chess.ChessGame;
+import chess.ChessMove;
+import chess.ChessPosition;
 import datamodel.AuthData;
 import datamodel.GameData;
 import datamodel.UserData;
@@ -147,6 +149,30 @@ public class DataAccessTest {
         da.createGame("test1");
         var game = da.getGame(100);
         assertNull(game);
+    }
+
+    @Test
+    void updateGame() throws Exception {
+        da.createGame("test1");
+        var game = da.getGame(1);
+        var start = new ChessPosition(2, 1);
+        var end = new ChessPosition(3, 1);
+        game.game().makeMove(new ChessMove(start, end, null));
+        da.updateGame(game.gameID(), game.game());
+        var check = da.getGame(1);
+        assertEquals(check.game(), game.game());
+    }
+
+    @Test
+    void updateGameBadId() throws Exception {
+        da.createGame("test1");
+        var game = da.getGame(1);
+        var start = new ChessPosition(2, 1);
+        var end = new ChessPosition(3, 1);
+        game.game().makeMove(new ChessMove(start, end, null));
+        da.updateGame(2, game.game());
+        var check = da.getGame(1);
+        assertNotEquals(check.game(), game.game());
     }
 
     @Test

@@ -21,9 +21,10 @@ public class ChessClient {
     private ChessGame gameObject;
     private ChessBoard board;
     private ChessGame.TeamColor teamColor;
-    boolean waiting;
-    boolean confirmed;
-    boolean promoting;
+    private boolean waiting;
+    private boolean confirmed;
+    private boolean promoting;
+    public boolean observer;
 
     public ChessClient(String serverURL) throws Exception {
         messageHandler = new ServerMessageHandler(this);
@@ -218,8 +219,11 @@ public class ChessClient {
             if (id > list.size() || id < 1) {
                 return "Game does not exist";
             }
+            observer = true;
+            teamColor = null;
+            ws.connect(authToken, id);
             state = State.INGAME;
-            DrawBoard.printBoardWhite(board);
+//            DrawBoard.printBoardWhite(board);
             return String.format("Observing game %s", params[0]);
         }
         else {

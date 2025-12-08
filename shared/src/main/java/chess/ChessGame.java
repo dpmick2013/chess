@@ -16,8 +16,10 @@ public class ChessGame {
 
     public enum GameStatus {
         PLAYING,
+        CHECK,
         STALEMATE,
-        CHECKMATE
+        CHECKMATE,
+        RESIGNED
     }
 
     public ChessGame() {
@@ -42,6 +44,9 @@ public class ChessGame {
 
     public GameStatus getGameStatus() {
         return status;
+    }
+    public void setGameStatus(GameStatus status) {
+        this.status = status;
     }
 
     /**
@@ -84,15 +89,15 @@ public class ChessGame {
      */
     public void makeMove(ChessMove move) throws InvalidMoveException {
         if (gameBoard.getPiece(move.getStartPosition()) == null) {
-            throw new InvalidMoveException("No piece");
+            throw new InvalidMoveException("Error: no piece");
         }
         if (getTeamTurn() != gameBoard.getPiece(move.getStartPosition()).getTeamColor()) {
-            throw new InvalidMoveException("Not your turn");
+            throw new InvalidMoveException("Error: not your turn");
         }
         Collection<ChessMove> valid;
         valid = validMoves(move.getStartPosition());
         if (!valid.contains(move)) {
-            throw new InvalidMoveException("Invalid Move");
+            throw new InvalidMoveException("Error: invalid Move");
         }
         movePiece(move, gameBoard);
         if (getTeamTurn() == TeamColor.WHITE) {
@@ -111,7 +116,12 @@ public class ChessGame {
      */
     public boolean isInCheck(TeamColor teamColor) {
         ChessPosition kingPos = findKing(gameBoard, teamColor);
-        return checkIfAttacked(gameBoard, kingPos, teamColor);
+//        return checkIfAttacked(gameBoard, kingPos, teamColor);
+        if (checkIfAttacked(gameBoard, kingPos, teamColor)) {
+            status = GameStatus.CHECK;
+            return true;
+        }
+        return false;
     }
 
     /**

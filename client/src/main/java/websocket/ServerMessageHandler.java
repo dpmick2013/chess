@@ -25,20 +25,27 @@ public class ServerMessageHandler {
                 var board = load.game.getBoard();
                 client.setBoard(board);
                 var color = client.getColor();
-                if (color == ChessGame.TeamColor.WHITE) {
+                if (color == ChessGame.TeamColor.WHITE || client.observer) {
+                    System.out.println();
                     DrawBoard.printBoardWhite(board);
                 }
-                else {
+                else if (color == ChessGame.TeamColor.BLACK) {
+                    System.out.println();
                     DrawBoard.printBoardBlack(board);
                 }
+                client.printPrompt();
             }
             case NOTIFICATION -> {
                 var note = (NotificationMessage) message;
-//                showNotification(note.message);
+                System.out.println();
+                System.out.println(note.message);
+                client.printPrompt();
             }
             case ERROR -> {
                 var err = (ErrorMessage) message;
-//                showError(err.errorMessage);
+                System.out.println();
+                System.out.println(err.errorMessage);
+                client.printPrompt();
             }
         }
     }

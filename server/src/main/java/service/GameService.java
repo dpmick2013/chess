@@ -88,6 +88,14 @@ public class GameService {
         return game;
     }
 
+    public void updateGame(int gameID, GameData game) throws Exception {
+        try {
+            dataAccess.updateGame(gameID, game.game());
+        } catch(DataAccessException ex) {
+            sqlExceptionHandler(ex);
+        }
+    }
+
     public String getPlayerColor(String username, int gameID) throws Exception {
         var game = getGame(gameID);
         String whiteUser = "";
@@ -104,7 +112,7 @@ public class GameService {
         else if (username.equals(blackUser)) {
             return "black";
         }
-        return "";
+        return null;
     }
 
     private AuthData checkAuth(String token) throws Exception {

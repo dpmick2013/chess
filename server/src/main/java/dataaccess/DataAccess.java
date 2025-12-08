@@ -12,6 +12,7 @@ public interface DataAccess {
     void deleteAuth(String authToken) throws DataAccessException;
     int createGame(String name) throws DataAccessException;
     GameData getGame(Integer gameID) throws DataAccessException;
+    void updateGame(int gameID, ChessGame game) throws DataAccessException;
     GameList getGameList() throws DataAccessException;
     String getPlayer(ChessGame.TeamColor color, GameData game) throws DataAccessException;
     void joinGame(ChessGame.TeamColor color, String username, Integer gameID) throws DataAccessException;
