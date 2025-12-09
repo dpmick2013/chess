@@ -3,6 +3,7 @@ package server.websocket;
 import chess.ChessGame;
 import chess.InvalidMoveException;
 import com.google.gson.Gson;
+import datamodel.GameData;
 import exception.BadRequestException;
 import io.javalin.websocket.*;
 import org.eclipse.jetty.websocket.api.Session;
@@ -46,7 +47,7 @@ public class WebSocketHandler implements WsConnectHandler,  WsMessageHandler, Ws
                 case CONNECT -> handleConnectCommand(ctx, command);
                 case MAKE_MOVE -> handleMakeMoveCommand(ctx, (MakeMoveCommand) command);
 //                case LEAVE -> handleLeaveCommand(ctx, command);
-//                case RESIGN -> handleResignCommand(ctx, command);
+                case RESIGN -> handleResignCommand(ctx, command);
             }
         } catch(Exception ex) {
             sendError(ctx.session, "Server error: " + ex.getMessage());
@@ -83,6 +84,10 @@ public class WebSocketHandler implements WsConnectHandler,  WsMessageHandler, Ws
     private void handleMakeMoveCommand(WsMessageContext ctx, MakeMoveCommand command) throws Exception {
         var gameID = command.getGameID();
         var game = gameService.getGame(gameID);
+        if (checkIfGameOver(game)) {
+            sendError(ctx.session, "Error: game is over");
+            return;
+        }
         if (!validateMove(command, game.game())) {
             sendError(ctx.session, "Error: illegal move");
             return;
@@ -94,23 +99,61 @@ public class WebSocketHandler implements WsConnectHandler,  WsMessageHandler, Ws
         String notifyText = username + " moved " + command.move.toString();
         connections.broadcast(gameID, ctx.session, new NotificationMessage(notifyText));
         var status = game.game().getGameStatus();
-        if (status != ChessGame.GameStatus.PLAYING) {
-            notifyText = "Game has ended in" + status.toString();
+        if (status == ChessGame.GameStatus.CHECK) {
+            var color = gameService.getPlayerColor(username, gameID);
+            if (color.equalsIgnoreCase("white")) {
+                notifyText = "Black is in check";
+            }
+            else {
+                notifyText = "White is in check";
+            }
+            connections.broadcast(gameID, null, new NotificationMessage(notifyText));
+        }
+        if (checkIfGameOver(game)) {
+            var statusString = (status == ChessGame.GameStatus.STALEMATE) ? "stalemate" :
+                               (status == ChessGame.GameStatus.CHECKMATE) ? "checkmate" :
+                               "resignation";
+            notifyText = "Game has ended in " + statusString;
             connections.broadcast(gameID, null, new NotificationMessage(notifyText));
         }
     }
 
 //    private void handleLeaveCommand(WsMessageContext ctx, UserGameCommand command) throws Exception {
+//        try {
+//            validateCommand(command);
+//        } catch(Exception ex) {
+//            sendError(ctx.session, ex.getMessage());
+//            return;
+//        }
+//        var username = userService.getUsernameFromAuth(command.getAuthToken());
 //        connections.remove(ctx.session);
-//        String notifyText = command + " left the game";
-//        connections.broadcast(1, null, new NotificationMessage(notifyText));
+//        String notifyText = username + " left the game";
+//        connections.broadcast(1, ctx.session, new NotificationMessage(notifyText));
 //    }
 
-//    private void handleResignCommand(WsMessageContext ctx, UserGameCommand command) throws Exception {
-//        markGameOver();
-//        String notifyText = command.username + " resigned";
-//        connections.broadcast(1, null, new NotificationMessage(notifyText));
-//    }
+    private void handleResignCommand(WsMessageContext ctx, UserGameCommand command) throws Exception {
+        try {
+            validateCommand(command);
+        } catch(Exception ex) {
+            sendError(ctx.session, ex.getMessage());
+            return;
+        }
+        var gameID = command.getGameID();
+        var game = gameService.getGame(gameID);
+        var username = userService.getUsernameFromAuth(command.getAuthToken());
+        if (checkIfObserver(username, gameID)) {
+            sendError(ctx.session, "Error: you are observing");
+            return;
+        }
+        if (checkIfGameOver(game)) {
+            sendError(ctx.session, "Error: game is over");
+            return;
+        }
+        game.game().setGameStatus(ChessGame.GameStatus.RESIGNED);
+        gameService.updateGame(gameID, game);
+        String notifyText = username + " resigned, game over";
+        connections.broadcast(1, null, new NotificationMessage(notifyText));
+    }
 
     private void sendError(Session session, String errorMsg) {
         ServerMessage error = new ErrorMessage(errorMsg);
@@ -133,6 +176,9 @@ public class WebSocketHandler implements WsConnectHandler,  WsMessageHandler, Ws
         }
         var username = userService.getUsernameFromAuth(command.getAuthToken());
         var color = gameService.getPlayerColor(username, command.getGameID());
+        if (color == null) {
+            throw new Exception("Error: observers can't make moves");
+        }
         var turn = game.getTeamTurn();
         var turnString = (turn == ChessGame.TeamColor.WHITE) ? "white" : "black";
         if (!color.equals(turnString)) {
@@ -144,5 +190,15 @@ public class WebSocketHandler implements WsConnectHandler,  WsMessageHandler, Ws
             return false;
         }
         return true;
+    }
+
+    private boolean checkIfGameOver(GameData game) {
+        var status = game.game().getGameStatus();
+        return status != ChessGame.GameStatus.PLAYING && status != ChessGame.GameStatus.CHECK;
+    }
+
+    private boolean checkIfObserver(String username, int gameID) throws Exception {
+        var color = gameService.getPlayerColor(username, gameID);
+        return color == null;
     }
 }
