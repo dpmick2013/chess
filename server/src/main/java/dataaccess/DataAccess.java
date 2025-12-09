@@ -16,4 +16,5 @@ public interface DataAccess {
     GameList getGameList() throws DataAccessException;
     String getPlayer(ChessGame.TeamColor color, GameData game) throws DataAccessException;
     void joinGame(ChessGame.TeamColor color, String username, Integer gameID) throws DataAccessException;
+    void leaveGame(ChessGame.TeamColor color, Integer gameID) throws DataAccessException;
 }

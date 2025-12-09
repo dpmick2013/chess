@@ -240,7 +240,7 @@ public class ChessClient {
 
     private String redraw() throws Exception {
         assertInGame();
-        if (teamColor == ChessGame.TeamColor.WHITE) {
+        if (teamColor == ChessGame.TeamColor.WHITE || observer) {
             DrawBoard.printBoardWhite(board);
         }
         else if (teamColor == ChessGame.TeamColor.BLACK){
@@ -275,7 +275,7 @@ public class ChessClient {
         var move = new ChessMove(start, end, promotion);
         promoting = false;
         ws.move(authToken, gameID, move);
-        return String.format("Move made from %s to %s", params[0], params[1]);
+        return "";
     }
 
     private String highlight(String... params) throws Exception {
@@ -297,19 +297,24 @@ public class ChessClient {
         return "";
     }
 
-    private String resign() {
+    private String resign() throws Exception {
+        if (observer) {
+            return "You can not resign";
+        }
         if (!confirmed) {
             waiting = true;
             return "Are you sure you want to resign (y/n)";
         }
         else {
             confirmed = false;
-            return "You have resigned, game over";
+            ws.resign(authToken, gameID);
+            return "";
         }
     }
 
     private String leave() throws Exception {
         assertInGame();
+        ws.leave(authToken, gameID);
         state = State.LOGGEDIN;
         return "You left the game";
     }

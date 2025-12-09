@@ -73,6 +73,19 @@ public class GameService {
         }
     }
 
+    public void leaveGame(String color, Integer gameID) throws Exception {
+        try {
+            if (color.equalsIgnoreCase("white")) {
+                dataAccess.leaveGame(ChessGame.TeamColor.WHITE, gameID);
+            }
+            else {
+                dataAccess.leaveGame(ChessGame.TeamColor.BLACK, gameID);
+            }
+        } catch (DataAccessException ex) {
+            sqlExceptionHandler(ex);
+        }
+    }
+
     public GameData getGame(int gameID) throws Exception {
         GameData game = null;
         try {

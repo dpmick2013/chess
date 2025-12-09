@@ -55,9 +55,7 @@ public class MemoryDataAccess implements DataAccess {
     }
 
     @Override
-    public void updateGame(int gameID, ChessGame game) throws DataAccessException {
-
-    }
+    public void updateGame(int gameID, ChessGame game) throws DataAccessException {}
 
     @Override
     public GameList getGameList() {
@@ -88,4 +86,7 @@ public class MemoryDataAccess implements DataAccess {
             games.replace(gameID, new GameData(gameID, game.whiteUsername(), username, game.gameName(), game.game()));
         }
     }
+
+    @Override
+    public void leaveGame(ChessGame.TeamColor color, Integer gameID) {}
 }

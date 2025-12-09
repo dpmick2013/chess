@@ -38,7 +38,6 @@ public class ConnectionManager {
         if (session != null && session.isOpen()) {
             try {
                 var json = new Gson().toJson(message);
-                System.out.println(json);
                 session.getRemote().sendString(json);
             } catch (IOException e) {
                 System.err.println("Failed to send message to client: " + e.getMessage());

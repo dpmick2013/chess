@@ -46,7 +46,7 @@ public class WebSocketHandler implements WsConnectHandler,  WsMessageHandler, Ws
             switch(command.getCommandType()) {
                 case CONNECT -> handleConnectCommand(ctx, command);
                 case MAKE_MOVE -> handleMakeMoveCommand(ctx, (MakeMoveCommand) command);
-//                case LEAVE -> handleLeaveCommand(ctx, command);
+                case LEAVE -> handleLeaveCommand(ctx, command);
                 case RESIGN -> handleResignCommand(ctx, command);
             }
         } catch(Exception ex) {
@@ -118,18 +118,23 @@ public class WebSocketHandler implements WsConnectHandler,  WsMessageHandler, Ws
         }
     }
 
-//    private void handleLeaveCommand(WsMessageContext ctx, UserGameCommand command) throws Exception {
-//        try {
-//            validateCommand(command);
-//        } catch(Exception ex) {
-//            sendError(ctx.session, ex.getMessage());
-//            return;
-//        }
-//        var username = userService.getUsernameFromAuth(command.getAuthToken());
-//        connections.remove(ctx.session);
-//        String notifyText = username + " left the game";
-//        connections.broadcast(1, ctx.session, new NotificationMessage(notifyText));
-//    }
+    private void handleLeaveCommand(WsMessageContext ctx, UserGameCommand command) throws Exception {
+        try {
+            validateCommand(command);
+        } catch(Exception ex) {
+            sendError(ctx.session, ex.getMessage());
+            return;
+        }
+        var gameID = command.getGameID();
+        var username = userService.getUsernameFromAuth(command.getAuthToken());
+        var color = gameService.getPlayerColor(username, gameID);
+        if (color != null) {
+            gameService.leaveGame(color, gameID);
+        }
+        connections.remove(ctx.session);
+        String notifyText = username + " left the game";
+        connections.broadcast(gameID, ctx.session, new NotificationMessage(notifyText));
+    }
 
     private void handleResignCommand(WsMessageContext ctx, UserGameCommand command) throws Exception {
         try {
@@ -152,7 +157,7 @@ public class WebSocketHandler implements WsConnectHandler,  WsMessageHandler, Ws
         game.game().setGameStatus(ChessGame.GameStatus.RESIGNED);
         gameService.updateGame(gameID, game);
         String notifyText = username + " resigned, game over";
-        connections.broadcast(1, null, new NotificationMessage(notifyText));
+        connections.broadcast(gameID, null, new NotificationMessage(notifyText));
     }
 
     private void sendError(Session session, String errorMsg) {

@@ -4,10 +4,7 @@ import chess.ChessGame;
 import com.google.gson.Gson;
 import datamodel.*;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
+import java.sql.*;
 import java.util.ArrayList;
 
 import static java.sql.Statement.RETURN_GENERATED_KEYS;
@@ -229,6 +226,18 @@ public class MySqlDataAccess implements DataAccess{
         executeUpdate(statement, username, gameID);
     }
 
+    @Override
+    public void leaveGame(ChessGame.TeamColor color, Integer gameID) throws DataAccessException {
+        String statement;
+        if (color == ChessGame.TeamColor.WHITE) {
+            statement = "UPDATE games SET whiteUsername=? WHERE gameID=?";
+        }
+        else {
+            statement = "UPDATE games SET blackUsername=? WHERE gameID=?";
+        }
+        executeUpdate(statement, null, gameID);
+    }
+
     private int executeUpdate(String statement, Object... params) throws DataAccessException {
         try (Connection conn = DatabaseManager.getConnection()) {
             try (PreparedStatement ps = conn.prepareStatement(statement, RETURN_GENERATED_KEYS)) {
@@ -239,6 +248,9 @@ public class MySqlDataAccess implements DataAccess{
                     }
                     else if (param instanceof Integer p) {
                         ps.setInt(i + 1, p);
+                    }
+                    else if (param == null) {
+                        ps.setNull(i + 1, Types.VARCHAR);
                     }
                 }
                 ps.executeUpdate();
