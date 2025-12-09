@@ -15,7 +15,6 @@ public class ChessClient {
 
     private State state = State.LOGGEDOUT;
     private final ServerFacade server;
-    private final ServerMessageHandler messageHandler;
     private final WebSocketFacade ws;
     private String authToken;
     private ChessGame gameObject;
@@ -28,7 +27,7 @@ public class ChessClient {
     public boolean observer;
 
     public ChessClient(String serverURL) throws Exception {
-        messageHandler = new ServerMessageHandler(this);
+        ServerMessageHandler messageHandler = new ServerMessageHandler(this);
         server = new ServerFacade(serverURL);
         ws = new WebSocketFacade(serverURL, messageHandler);
     }
@@ -70,7 +69,7 @@ public class ChessClient {
             String[] tokens = input.split(" ");
             String cmd = (tokens.length > 0) ? tokens[0] : "help";
             String[] params = Arrays.copyOfRange(tokens, 1, tokens.length);
-            String str = "";
+            String str;
             if (waiting) {
                 switch (cmd) {
                     case "y" -> {

@@ -110,6 +110,7 @@ public class WebSocketHandler implements WsConnectHandler,  WsMessageHandler, Ws
             connections.broadcast(gameID, null, new NotificationMessage(notifyText));
         }
         if (checkIfGameOver(game)) {
+            status = game.game().getGameStatus();
             var statusString = (status == ChessGame.GameStatus.STALEMATE) ? "stalemate" :
                                (status == ChessGame.GameStatus.CHECKMATE) ? "checkmate" :
                                "resignation";
@@ -199,7 +200,22 @@ public class WebSocketHandler implements WsConnectHandler,  WsMessageHandler, Ws
 
     private boolean checkIfGameOver(GameData game) {
         var status = game.game().getGameStatus();
-        return status != ChessGame.GameStatus.PLAYING && status != ChessGame.GameStatus.CHECK;
+        if (status == ChessGame.GameStatus.CHECKMATE || status == ChessGame.GameStatus.STALEMATE) {
+            return true;
+        }
+        var checkmateWhite = game.game().isInCheckmate(ChessGame.TeamColor.WHITE);
+        var checkmateBlack = game.game().isInCheckmate(ChessGame.TeamColor.BLACK);
+        var stalemateWhite = game.game().isInStalemate(ChessGame.TeamColor.WHITE);
+        var stalemateBlack = game.game().isInStalemate(ChessGame.TeamColor.BLACK);
+        if (checkmateWhite || checkmateBlack) {
+            game.game().setGameStatus(ChessGame.GameStatus.CHECKMATE);
+            return true;
+        }
+        else if (stalemateWhite || stalemateBlack) {
+            game.game().setGameStatus(ChessGame.GameStatus.STALEMATE);
+            return true;
+        }
+        return false;
     }
 
     private boolean checkIfObserver(String username, int gameID) throws Exception {
