@@ -97,15 +97,19 @@ public class WebSocketHandler implements WsConnectHandler,  WsMessageHandler, Ws
         String notifyText = username + " moved " + command.move.toString();
         connections.broadcast(gameID, ctx.session, new NotificationMessage(notifyText));
         var status = game.game().getGameStatus();
-        if (status == ChessGame.GameStatus.CHECK) {
+        if (game.game().isInCheck(ChessGame.TeamColor.WHITE) || game.game().isInCheck(ChessGame.TeamColor.BLACK)) {
             var color = gameService.getPlayerColor(username, gameID);
+            String checkedUser;
             if (color.equalsIgnoreCase("white")) {
-                notifyText = "Black is in check";
+                checkedUser = gameService.getPlayerFromColor(ChessGame.TeamColor.BLACK, game);
             }
             else {
-                notifyText = "White is in check";
+                checkedUser = gameService.getPlayerFromColor(ChessGame.TeamColor.WHITE, game);
             }
-            connections.broadcast(gameID, null, new NotificationMessage(notifyText));
+            if (!game.game().isInCheckmate(ChessGame.TeamColor.WHITE) && !game.game().isInCheckmate(ChessGame.TeamColor.BLACK)) {
+                notifyText = checkedUser + " is in check";
+                connections.broadcast(gameID, null, new NotificationMessage(notifyText));
+            }
         }
         if (checkIfGameOver(game)) {
             status = game.game().getGameStatus();
@@ -198,7 +202,7 @@ public class WebSocketHandler implements WsConnectHandler,  WsMessageHandler, Ws
 
     private boolean checkIfGameOver(GameData game) {
         var status = game.game().getGameStatus();
-        if (status == ChessGame.GameStatus.CHECKMATE || status == ChessGame.GameStatus.STALEMATE) {
+        if (status != ChessGame.GameStatus.PLAYING && status != ChessGame.GameStatus.CHECK) {
             return true;
         }
         var checkmateWhite = game.game().isInCheckmate(ChessGame.TeamColor.WHITE);

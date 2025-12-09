@@ -23,13 +23,7 @@ public class ConnectionManager {
         for (ConnectedClient c : connections.values()) {
             Session session = c.session();
             if (c.gameID() == gameID && !session.equals(excludeSession) && session.isOpen()) {
-//                c.session().getRemote().sendString(msg);
                 session.getRemote().sendString(msg);
-//                try {
-//                    session.getRemote().sendString(msg);
-//                } catch (IOException e) {
-//                    System.err.println("Failed to send message to " + c.username() + ": " + e.getMessage());
-//                }
             }
         }
     }

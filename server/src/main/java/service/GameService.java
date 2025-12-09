@@ -123,6 +123,16 @@ public class GameService {
         return null;
     }
 
+    public String getPlayerFromColor(ChessGame.TeamColor color, GameData game) throws Exception {
+        String username = "";
+        try {
+            username = dataAccess.getPlayer(color, game);
+        } catch(DataAccessException ex) {
+            sqlExceptionHandler(ex);
+        }
+        return username;
+    }
+
     private AuthData checkAuth(String token) throws Exception {
         AuthData authData = null;
         try {
