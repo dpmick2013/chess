@@ -63,7 +63,7 @@ public class WebSocketHandler implements WsConnectHandler,  WsMessageHandler, Ws
         try {
             validateCommand(command);
         } catch(Exception ex) {
-            sendError(ctx.session, "Error: invalid auth token or game ID");
+            sendError(ctx.session, ex.getMessage());
             return;
         }
         var token = command.getAuthToken();
@@ -73,9 +73,9 @@ public class WebSocketHandler implements WsConnectHandler,  WsMessageHandler, Ws
         ServerMessage loadGame = new LoadGameMessage(gameService.getGame(gameID).game());
         connections.sendToClient(ctx.session, loadGame);
         var color = gameService.getPlayerColor(username, gameID);
-        String notifyText = username + " connected as " + color;
+        String notifyText = username + " joined as " + color;
         if (color == null) {
-            notifyText = username + " connected as observer";
+            notifyText = username + " joined as an observer";
         }
         connections.broadcast(command.getGameID(), ctx.session, new NotificationMessage(notifyText));
     }
@@ -88,9 +88,10 @@ public class WebSocketHandler implements WsConnectHandler,  WsMessageHandler, Ws
             return;
         }
         gameService.updateGame(gameID, game);
+        var username = userService.getUsernameFromAuth(command.getAuthToken());
         ServerMessage loadGameMsg = new LoadGameMessage(game.game());
         connections.broadcast(gameID, null, loadGameMsg);
-        String notifyText = command + " moved " + command.move.toString();
+        String notifyText = username + " moved " + command.move.toString();
         connections.broadcast(gameID, ctx.session, new NotificationMessage(notifyText));
         var status = game.game().getGameStatus();
         if (status != ChessGame.GameStatus.PLAYING) {

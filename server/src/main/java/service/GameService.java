@@ -53,11 +53,6 @@ public class GameService {
         }
         var auth = checkAuth(authToken);
         GameData game = getGame(gameID);
-//        try {
-//            game = dataAccess.getGame(gameID);
-//        } catch (DataAccessException ex) {
-//            sqlExceptionHandler(ex);
-//        }
         if (game == null) {
             throw new BadRequestException("Error: game does not exist");
         }

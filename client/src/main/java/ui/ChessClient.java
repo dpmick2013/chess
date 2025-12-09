@@ -19,6 +19,7 @@ public class ChessClient {
     private final WebSocketFacade ws;
     private String authToken;
     private ChessGame gameObject;
+    private int gameID;
     private ChessBoard board;
     private ChessGame.TeamColor teamColor;
     private boolean waiting;
@@ -188,7 +189,8 @@ public class ChessClient {
                 return "Game does not exist";
             }
             var game = list.get(id - 1);
-            server.joinGame(color, game.gameID(), authToken);
+            gameID = game.gameID();
+            server.joinGame(color, gameID, authToken);
             if (color.equals("WHITE")) {
                 teamColor = ChessGame.TeamColor.WHITE;
             }
@@ -196,8 +198,6 @@ public class ChessClient {
                 teamColor = ChessGame.TeamColor.BLACK;
             }
             ws.connect(authToken, id);
-//            gameObject = new ChessGame();
-//            board = gameObject.getBoard();
             state = State.INGAME;
             return String.format("Joined game %s as %s player", params[0], params[1]);
         }
@@ -274,7 +274,7 @@ public class ChessClient {
         }
         var move = new ChessMove(start, end, promotion);
         promoting = false;
-        gameObject.makeMove(move);
+        ws.move(authToken, gameID, move);
         return String.format("Move made from %s to %s", params[0], params[1]);
     }
 
