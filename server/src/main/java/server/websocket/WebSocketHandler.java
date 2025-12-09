@@ -17,8 +17,6 @@ import websocket.messages.LoadGameMessage;
 import websocket.messages.NotificationMessage;
 import websocket.messages.ServerMessage;
 
-import java.io.IOException;
-
 public class WebSocketHandler implements WsConnectHandler,  WsMessageHandler, WsCloseHandler {
 
     private final ConnectionManager connections = new ConnectionManager();

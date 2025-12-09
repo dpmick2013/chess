@@ -55,7 +55,7 @@ public class MemoryDataAccess implements DataAccess {
     }
 
     @Override
-    public void updateGame(int gameID, ChessGame game) throws DataAccessException {}
+    public void updateGame(int gameID, ChessGame game) {}
 
     @Override
     public GameList getGameList() {
