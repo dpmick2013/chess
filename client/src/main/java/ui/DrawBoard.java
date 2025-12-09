@@ -4,7 +4,7 @@ import chess.*;
 
 import java.util.Collection;
 
-import static ui.EscapeSequences.*;
+import static utilities.EscapeSequences.*;
 
 public class DrawBoard {
     private static final int BOARD_SIZE = 8;
